@@ -96,6 +96,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/[email protected]/dist/jsQR.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
 <script>
@@ -116,11 +117,7 @@ async function toggleScanner(){
     document.getElementById('scan-zone').style.display = 'none';
     scanning = true;
     if(!window.jsQR){
-      var s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/[email protected]/dist/jsQR.js';
-      s.onload = function(){ requestAnimationFrame(doFrame); };
-      s.onerror = function(){ toast('Scanner indisponível — usa validação manual','warn'); };
-      document.head.appendChild(s);
+      toast('Scanner indisponível — usa validação manual','warn');
     } else {
       requestAnimationFrame(doFrame);
     }
