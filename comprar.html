@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprar Bilhete — Vila Seca Stand-Up Night</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.buy-wrap { max-width:960px; margin:0 auto; padding:3rem 2rem; display:grid; grid-template-columns:1.1fr .9fr; gap:2.5rem; align-items:start; }
+.steps-bar { display:flex; margin-bottom:2rem; border:1.5px solid var(--border); overflow:hidden; }
+.step-tab { flex:1; padding:.9rem .5rem; text-align:center; font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:1px; text-transform:uppercase; color:var(--muted); background:var(--cream); border-right:1.5px solid var(--border); transition:all .2s; }
+.step-tab:last-child { border-right:none; }
+.step-tab.active { background:var(--ink); color:var(--yellow); }
+.step-tab .snum { font-family:'Bebas Neue',cursive; font-size:1.4rem; display:block; line-height:1; }
+.form-card { background:white; padding:2.5rem; border:1.5px solid var(--border); }
+.form-card h2 { font-family:'Bebas Neue',cursive; font-size:2rem; margin-bottom:.3rem; }
+.form-sub { color:var(--muted); font-size:.82rem; margin-bottom:2rem; }
+.mbway-card { background:var(--ink); color:white; padding:1.8rem; margin:1.5rem 0; }
+.mbway-top { display:flex; align-items:center; gap:.8rem; margin-bottom:1.2rem; }
+.mbway-badge { background:var(--yellow); color:var(--ink); font-family:'Bebas Neue',cursive; font-size:1rem; padding:.25rem .7rem; letter-spacing:2px; }
+.mbway-steps { list-style:none; counter-reset:mbs; }
+.mbway-steps li { counter-increment:mbs; font-size:.82rem; color:#bbb; padding:.3rem 0 .3rem 1.6rem; position:relative; line-height:1.5; }
+.mbway-steps li::before { content:counter(mbs); position:absolute; left:0; font-family:'Bebas Neue',cursive; color:var(--yellow); font-size:.95rem; }
+.mbway-steps strong { color:white; }
+.mbway-number { font-family:'Bebas Neue',cursive; font-size:1.9rem; color:var(--yellow); letter-spacing:4px; margin-top:.8rem; padding:.7rem 1rem; background:rgba(240,192,48,.1); border:1px solid rgba(240,192,48,.3); display:inline-block; }
+.mbway-amount-lbl { font-family:'Space Mono',monospace; font-size:.7rem; color:#888; margin-top:.5rem; }
+.mbway-amount-lbl strong { color:var(--yellow); font-size:1.05rem; }
+.order-sidebar { background:var(--ink); color:white; padding:2rem; position:sticky; top:80px; }
+.sidebar-ttl { font-family:'Bebas Neue',cursive; font-size:1.4rem; color:var(--yellow); letter-spacing:2px; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid #222; }
+.srow { display:flex; justify-content:space-between; font-size:.83rem; margin-bottom:.7rem; color:#aaa; }
+.srow .sv { color:white; }
+.srow.stotal { font-family:'Bebas Neue',cursive; font-size:2rem; color:white; margin-top:1rem; padding-top:1rem; border-top:1px solid #2a2a2a; align-items:baseline; }
+.srow.stotal .sv { color:var(--yellow); }
+.stock-widget { margin-top:1.5rem; padding:1.2rem; background:rgba(255,255,255,.04); border:1px solid #252525; }
+.sw-lbl { font-family:'Space Mono',monospace; font-size:.52rem; letter-spacing:2px; text-transform:uppercase; color:#555; margin-bottom:.5rem; }
+.sw-num { font-family:'Bebas Neue',cursive; font-size:3rem; color:var(--yellow); line-height:1; }
+.sw-sub { font-size:.72rem; color:#666; margin-top:.2rem; }
+.sw-bar { margin-top:.6rem; height:4px; background:#2a2a2a; border-radius:2px; }
+.sw-fill { height:4px; background:var(--yellow); border-radius:2px; transition:width .5s; }
+@media(max-width:768px) {
+  .buy-wrap { grid-template-columns:1fr; }
+  .order-sidebar { position:static; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading"><div class="spinner"></div><div class="loading-text" id="loading-text">A processar...</div></div>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <span class="nav-brand-top">Comissão de Festas</span>
+    <span class="nav-brand-main">VILA SECA 🎤</span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-btn" href="index.html">← Início</a>
+    <a class="nav-btn cta active" href="comprar.html">Comprar Bilhete</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>Comprar Bilhetes</h1>
+  <p>Stand-Up Comedy Night · Comissão de Festas Vila Seca · 14 Jun 2025</p>
+</div>
+
+<div class="buy-wrap">
+  <div>
+    <div class="steps-bar">
+      <div class="step-tab active" id="st1"><span class="snum">1</span>Dados</div>
+      <div class="step-tab" id="st2"><span class="snum">2</span>Pagamento</div>
+      <div class="step-tab" id="st3"><span class="snum">3</span>Confirmado</div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="bs1">
+      <div class="form-card fadein">
+        <h2>Os Teus Dados</h2>
+        <p class="form-sub">Receberás o link do bilhete no email após confirmação do pagamento</p>
+        <div class="field"><label>Nome Completo *</label><input type="text" id="f-name" placeholder="Ex: Maria Silva"></div>
+        <div class="field"><label>Email *</label><input type="email" id="f-email" placeholder="email@exemplo.com"></div>
+        <div class="field"><label>Telemóvel MBWay *</label><input type="tel" id="f-phone" placeholder="9XX XXX XXX" maxlength="9"></div>
+        <div class="field">
+          <label>Nº de Bilhetes</label>
+          <div class="qty-row">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <span class="qty-num" id="q-num">1</span>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+            <span class="qty-hint">máx. 10 por pessoa</span>
+          </div>
+        </div>
+        <button class="submit-btn" onclick="goStep2()">Continuar para Pagamento →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="bs2" style="display:none">
+      <div class="form-card fadein">
+        <h2>Pagamento MBWay</h2>
+        <p class="form-sub">Paga agora e aguarda confirmação da Comissão</p>
+        <div class="mbway-card">
+          <div class="mbway-top"><span class="mbway-badge">MB WAY</span><span style="font-size:.72rem;color:#888">Pagamento Seguro</span></div>
+          <ol class="mbway-steps">
+            <li>Abre a <strong>app MB WAY</strong> no teu telemóvel</li>
+            <li>Vai a <strong>"Pagar"</strong> → <strong>"Telemóvel"</strong></li>
+            <li>Introduz o número:<br><div class="mbway-number" id="pay-num">—</div></li>
+            <li>Introduz o valor:<br><div class="mbway-amount-lbl">Valor: <strong id="pay-amt">—</strong></div></li>
+            <li>Coloca o teu <strong>nome</strong> na descrição</li>
+            <li>Confirma e clica <strong>"Já Paguei"</strong> abaixo</li>
+          </ol>
+        </div>
+        <div style="background:var(--cream);border:1.5px solid var(--border);padding:1rem;margin-bottom:.8rem;font-size:.82rem">
+          <strong id="pay-sname">—</strong><br>
+          <span style="color:var(--muted);font-family:'Space Mono',monospace;font-size:.68rem" id="pay-sdetail">—</span>
+        </div>
+        <div class="info-box">ℹ️ Após confirmação receberás um <strong>email com o link do teu bilhete e QR Code</strong>.</div>
+        <div class="warning-box">⚠ Clica em "Já Paguei" APENAS após teres feito o pagamento no MBWay.</div>
+        <div style="display:flex;gap:1rem">
+          <button class="submit-btn grey" style="flex:.4" onclick="goStep1()">← Voltar</button>
+          <button class="submit-btn" id="btn-submit" style="flex:1" onclick="submitPending()">✓ Já Paguei!</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 — success inline -->
+    <div id="bs3" style="display:none">
+      <div class="form-card fadein" style="text-align:center">
+        <div style="width:70px;height:70px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.5rem;animation:pulse-ring 2s infinite">⏳</div>
+        <h2>Pedido Recebido!</h2>
+        <p style="color:var(--muted);margin:.5rem 0 1.5rem;font-size:.9rem;line-height:1.7">O teu pedido foi registado.<br>Receberás um <strong>email com o link do teu bilhete</strong> assim que a Comissão confirmar o pagamento.</p>
+        <div style="background:var(--ink);color:white;padding:1.2rem;margin-bottom:1.5rem;text-align:left">
+          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:.5rem">Código do teu pedido</div>
+          <div style="font-family:'Space Mono',monospace;font-size:1.1rem;letter-spacing:4px;color:var(--yellow)" id="s3-code">—</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;margin-top:.4rem">Guarda este código — podes usá-lo para verificar o estado em <strong style="color:#aaa">bilhete.html</strong></div>
+        </div>
+        <a class="btn-primary" href="index.html" style="justify-content:center;margin-top:.5rem">← Voltar ao Início</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div>
+    <div class="order-sidebar">
+      <div class="sidebar-ttl">Resumo</div>
+      <div class="srow"><span>Evento</span><span class="sv">Stand-Up Night</span></div>
+      <div class="srow"><span>Data</span><span class="sv">Sáb 14 Jun</span></div>
+      <div class="srow"><span>Hora</span><span class="sv">21h30</span></div>
+      <div class="srow"><span>Bilhete(s)</span><span class="sv" id="sb-qty">1×</span></div>
+      <div class="srow"><span>Preço unit.</span><span class="sv">9 €</span></div>
+      <div class="srow stotal"><span>Total</span><span class="sv" id="sb-total">9 €</span></div>
+      <div class="stock-widget">
+        <div class="sw-lbl">Lugares disponíveis</div>
+        <div class="sw-num" id="sw-num">—</div>
+        <div class="sw-sub">de <span id="sw-cap">80</span> lugares totais</div>
+        <div class="sw-bar"><div class="sw-fill" id="sw-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+var qty = 1;
+
+// Load stock
+(async function(){
+  try {
+    var tickets = await getTicketCounts();
+    var cap = await getCapacity();
+    var confirmed = tickets.filter(function(t){return t.status!=='pending' && t.status!=='cancelled';}).reduce(function(a,t){return a+t.qty;},0);
+    var avail = Math.max(0, cap - confirmed);
+    var pct = cap>0 ? Math.round((confirmed/cap)*100) : 0;
+    setEl('sw-num', avail); setEl('sw-cap', cap); setBar('sw-fill', pct);
+  } catch(e){}
+})();
+
+function changeQty(d){
+  qty = Math.max(1, Math.min(10, qty+d));
+  setEl('q-num', qty); setEl('sb-qty', qty+'×'); setEl('sb-total', (qty*CFG.price)+' €');
+}
+
+function goStep2(){
+  var name  = document.getElementById('f-name').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var phone = document.getElementById('f-phone').value.trim();
+  if(!name)  { toast('⚠ Introduz o teu nome','err'); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('⚠ Email inválido','err'); return; }
+  if(phone.replace(/\s/g,'').length < 9) { toast('⚠ Telemóvel inválido (9 dígitos)','err'); return; }
+  document.getElementById('bs1').style.display = 'none';
+  document.getElementById('bs2').style.display = 'block';
+  document.getElementById('st1').classList.remove('active');
+  document.getElementById('st2').classList.add('active');
+  setEl('pay-num', CFG.mbway);
+  setEl('pay-amt', (qty*CFG.price).toFixed(2)+' €');
+  setEl('pay-sname', name);
+  setEl('pay-sdetail', qty+' bilhete(s) · '+(qty*CFG.price)+' €');
+}
+
+function goStep1(){
+  document.getElementById('bs1').style.display = 'block';
+  document.getElementById('bs2').style.display = 'none';
+  document.getElementById('st1').classList.add('active');
+  document.getElementById('st2').classList.remove('active');
+}
+
+async function submitPending(){
+  // Rate limiting client-side (complementar ao server-side)
+  if(!RL.check('buy', 3, 3600000)) return;
+  var name  = document.getElementById('f-name').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var phone = document.getElementById('f-phone').value.trim();
+  var btn   = document.getElementById('btn-submit');
+  btn.disabled = true; btn.textContent = 'A registar...';
+  showLoad('A registar o teu pedido...');
+  try {
+    // Código, preço, status e data são calculados no servidor
+    var result = await insertTicket({ name: name, email: email, phone: phone, qty: qty });
+    var code = result && result.length ? result[0].code : (result ? result.code : '---');
+    // Show step 3
+    document.getElementById('bs2').style.display = 'none';
+    document.getElementById('bs3').style.display = 'block';
+    document.getElementById('st2').classList.remove('active');
+    document.getElementById('st3').classList.add('active');
+    setEl('s3-code', code);
+    toast('✓ Pedido registado! Aguarda confirmação.','ok');
+  } catch(e) {
+    var msg = '⚠ Erro ao registar pedido. Tenta novamente.';
+    if(e.message && e.message.indexOf('rate_limit') !== -1) msg = '⚠ Demasiados pedidos. Aguarda uns minutos.';
+    if(e.message && e.message.indexOf('sold_out') !== -1) msg = '⚠ Bilhetes esgotados!';
+    toast(msg,'err');
+    console.error(e);
+    btn.disabled = false; btn.textContent = '✓ Já Paguei!';
+  } finally { hideLoad(); }
+}
+</script>
+</body>
+</html>

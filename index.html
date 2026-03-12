@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stand-Up Night — Comissão Festas de Vila Seca</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.hero { background:var(--ink); min-height:calc(100vh - 62px); display:grid; grid-template-columns:1.1fr .9fr; overflow:hidden; position:relative; }
+.hero-bg { position:absolute; inset:0; background-image:radial-gradient(circle at 15% 85%,rgba(240,192,48,.08) 0%,transparent 50%),radial-gradient(circle at 85% 15%,rgba(212,36,26,.06) 0%,transparent 50%); pointer-events:none; }
+.hero-left { display:flex; flex-direction:column; justify-content:center; padding:5rem 3rem 5rem 5rem; position:relative; z-index:1; }
+.eyebrow { display:flex; align-items:center; gap:.7rem; margin-bottom:2rem; }
+.eyebrow-line { width:40px; height:2px; background:var(--yellow); }
+.eyebrow-text { font-family:'Space Mono',monospace; font-size:.62rem; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); }
+.hero-title { font-family:'Bebas Neue',cursive; line-height:.88; margin-bottom:1.5rem; }
+.hero-title .l1 { font-size:clamp(3rem,5.5vw,6rem); color:#fff; display:block; }
+.hero-title .l2 { font-size:clamp(5rem,9vw,9.5rem); color:var(--yellow); display:block; letter-spacing:-2px; }
+.hero-title .l3 { font-size:clamp(2.2rem,4vw,4rem); color:#888; display:block; }
+.hero-body { color:#999; font-size:.9rem; line-height:1.7; max-width:420px; margin-bottom:2.5rem; }
+.hero-body strong { color:white; }
+.hero-meta { display:grid; grid-template-columns:1fr 1fr; gap:1rem 2rem; margin-bottom:3rem; padding:1.5rem; border:1px solid #222; background:rgba(255,255,255,.03); }
+.meta-label { font-family:'Space Mono',monospace; font-size:.52rem; letter-spacing:3px; text-transform:uppercase; color:#555; margin-bottom:.2rem; }
+.meta-val { color:white; font-weight:700; font-size:1rem; }
+.hero-ctas { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
+.hero-right { display:flex; align-items:center; justify-content:center; padding:3rem 4rem 3rem 2rem; position:relative; z-index:1; }
+.ticket-3d { position:relative; width:300px; }
+.ticket-shadow { position:absolute; inset:0; background:rgba(240,192,48,.15); transform:rotate(5deg) translate(12px,12px); border-radius:4px; }
+.ticket-main { position:relative; background:var(--cream); border-radius:4px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.6); }
+.t-head { background:var(--ink); padding:1.5rem 1.8rem; border-bottom:4px solid var(--yellow); text-align:center; }
+.t-head .org { font-family:'Space Mono',monospace; font-size:.52rem; letter-spacing:3px; text-transform:uppercase; color:#666; margin-bottom:.4rem; }
+.t-head h3 { font-family:'Bebas Neue',cursive; color:var(--yellow); font-size:1.6rem; letter-spacing:3px; }
+.t-tear { display:flex; justify-content:space-between; margin:0 -12px; position:relative; }
+.t-tear::before { content:''; position:absolute; left:12px; right:12px; top:50%; height:1px; background:repeating-linear-gradient(90deg,#bbb,#bbb 5px,transparent 5px,transparent 10px); }
+.t-dot { width:24px; height:24px; background:var(--ink); border-radius:50%; flex-shrink:0; }
+.t-body { padding:1.5rem 1.8rem; }
+.t-row { display:flex; justify-content:space-between; align-items:baseline; padding:.45rem 0; border-bottom:1px dashed #e0dbd0; font-size:.82rem; }
+.t-row:last-child { border-bottom:none; }
+.t-row .lbl { color:var(--muted); font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:1px; text-transform:uppercase; }
+.t-row .val { font-weight:700; }
+.t-price-wrap { text-align:center; padding:1rem 0 .5rem; border-top:2px solid var(--border); margin-top:.5rem; }
+.t-price { font-family:'Bebas Neue',cursive; font-size:3.5rem; color:var(--red); line-height:1; }
+.t-price-lbl { font-family:'Space Mono',monospace; font-size:.58rem; color:var(--muted); letter-spacing:2px; }
+.info-section { background:white; padding:5rem; }
+.info-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:3rem; }
+.info-card { border-top:3px solid var(--ink); padding-top:1.5rem; }
+.info-num { font-family:'Bebas Neue',cursive; font-size:3rem; color:var(--yellow); line-height:1; }
+.info-title { font-family:'Bebas Neue',cursive; font-size:1.3rem; margin:.3rem 0 .8rem; letter-spacing:1px; }
+.info-desc { color:var(--muted); font-size:.88rem; line-height:1.7; }
+@media(max-width:900px) {
+  .hero { grid-template-columns:1fr; }
+  .hero-right { display:none; }
+  .hero-left { padding:3rem 1.5rem; }
+  .info-grid { grid-template-columns:1fr; }
+  .info-section { padding:3rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading"><div class="spinner"></div><div class="loading-text" id="loading-text">A carregar...</div></div>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <span class="nav-brand-top">Comissão de Festas</span>
+    <span class="nav-brand-main">VILA SECA 🎤</span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-btn active" href="index.html">Início</a>
+    <a class="nav-btn cta" href="comprar.html">Comprar Bilhete</a>
+  </div>
+</nav>
+
+<div class="stock-banner">
+  <span class="stock-banner-lbl">Lugares disponíveis</span>
+  <div class="stock-bar-wrap"><div class="stock-bar-fill" id="home-bar" style="width:0%"></div></div>
+  <span class="stock-nums"><span id="home-avail">—</span> / <span id="home-cap">80</span></span>
+</div>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-left fadein">
+    <div class="eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Comissão de Festas Vila Seca · Evento Único</span></div>
+    <h1 class="hero-title">
+      <span class="l1">NOITE DE</span>
+      <span class="l2">STAND-UP</span>
+      <span class="l3">COMEDY</span>
+    </h1>
+    <p class="hero-body">Uma noite de gargalhadas garantidas!<br><strong>Não percas este evento especial</strong> organizado pela Comissão de Festas de Vila Seca. Lugares limitados!</p>
+    <div class="hero-meta">
+      <div><div class="meta-label">Data</div><div class="meta-val">Sábado, 14 Jun 2025</div></div>
+      <div><div class="meta-label">Hora</div><div class="meta-val">21h30</div></div>
+      <div><div class="meta-label">Local</div><div class="meta-val">Salão Paroquial</div></div>
+      <div><div class="meta-label">Preço</div><div class="meta-val" style="color:var(--yellow)">9 €</div></div>
+    </div>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="comprar.html">Comprar Bilhete →</a>
+      <a class="btn-ghost" href="#how">Como funciona</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="ticket-3d">
+      <div class="ticket-shadow"></div>
+      <div class="ticket-main">
+        <div class="t-head"><div class="org">Comissão de Festas Vila Seca</div><h3>STAND-UP NIGHT</h3></div>
+        <div class="t-tear"><div class="t-dot"></div><div class="t-dot"></div></div>
+        <div class="t-body">
+          <div class="t-row"><span class="lbl">Data</span><span class="val">Sáb, 14 Jun 2025</span></div>
+          <div class="t-row"><span class="lbl">Hora</span><span class="val">21h30</span></div>
+          <div class="t-row"><span class="lbl">Local</span><span class="val">Salão Paroquial</span></div>
+          <div class="t-row"><span class="lbl">Aldeia</span><span class="val">Vila Seca</span></div>
+          <div class="t-price-wrap"><div class="t-price">9€</div><div class="t-price-lbl">por bilhete · lugares limitados</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="info-section" id="how">
+  <div class="info-grid">
+    <div class="info-card fadein">
+      <div class="info-num">01</div>
+      <div class="info-title">Compra & Paga via MBWay</div>
+      <p class="info-desc">Preenches os teus dados e pagas via <strong>MBWay</strong>. O teu pedido fica em estado <strong>Pendente</strong>.</p>
+    </div>
+    <div class="info-card fadein" style="animation-delay:.1s">
+      <div class="info-num">02</div>
+      <div class="info-title">Comissão Confirma</div>
+      <p class="info-desc">A Comissão verifica o pagamento MBWay e confirma. <strong>Recebes um email</strong> com o link para o teu bilhete e QR Code.</p>
+    </div>
+    <div class="info-card fadein" style="animation-delay:.2s">
+      <div class="info-num">03</div>
+      <div class="info-title">Entra no Evento</div>
+      <p class="info-desc">No dia, mostras o <strong>QR Code</strong> à entrada. A Comissão valida em segundos e entras! 🎤</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+(async function(){
+  try {
+    var tickets = await getTicketCounts();
+    var cap = await getCapacity();
+    var confirmed = tickets.filter(function(t){return t.status!=='pending' && t.status!=='cancelled';}).reduce(function(a,t){return a+t.qty;},0);
+    var avail = Math.max(0, cap - confirmed);
+    var pct = cap > 0 ? Math.round((confirmed/cap)*100) : 0;
+    setEl('home-avail', avail);
+    setEl('home-cap', cap);
+    setBar('home-bar', pct);
+  } catch(e) { console.warn('Stock load failed', e); }
+})();
+</script>
+</body>
+</html>

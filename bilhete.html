@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Meu Bilhete — Vila Seca Stand-Up Night</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.ticket-wrap { max-width:580px; margin:4rem auto; padding:0 2rem; }
+
+/* PENDING STATE */
+.state-pending { text-align:center; }
+.pending-icon  { width:80px; height:80px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.2rem; margin:0 auto 2rem; animation:pulse-ring 2s infinite; }
+.pending-steps { list-style:none; counter-reset:ps; text-align:left; }
+.pending-steps li { counter-increment:ps; font-size:.88rem; padding:.6rem 0 .6rem 2.2rem; position:relative; border-bottom:1px solid var(--border); line-height:1.5; }
+.pending-steps li:last-child { border-bottom:none; }
+.pending-steps li::before { content:counter(ps); position:absolute; left:0; top:.7rem; width:1.5rem; height:1.5rem; background:var(--orange); color:white; font-family:'Bebas Neue',cursive; font-size:.85rem; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+.pending-steps strong { color:var(--orange); }
+
+/* VALID/USED STATE */
+.state-valid { text-align:center; }
+.valid-check { width:70px; height:70px; background:var(--green); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 2rem; animation:pop .4s ease; }
+.used-icon   { width:70px; height:70px; background:#888; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 2rem; }
+
+/* DIGITAL TICKET */
+.digital-ticket { background:white; border:1.5px solid var(--border); text-align:left; overflow:hidden; margin:1.5rem 0; }
+.dt-head { background:var(--ink); padding:1.2rem 1.8rem; display:flex; align-items:center; justify-content:space-between; }
+.dt-head h3 { font-family:'Bebas Neue',cursive; color:var(--yellow); font-size:1.4rem; letter-spacing:2px; }
+.dt-head .org-tag { font-family:'Space Mono',monospace; font-size:.58rem; color:#666; letter-spacing:2px; text-transform:uppercase; }
+.dt-body { padding:1.5rem 1.8rem; }
+.dt-qr { display:flex; justify-content:center; margin:1rem 0; }
+.dt-code { text-align:center; font-family:'Space Mono',monospace; font-size:.85rem; letter-spacing:4px; color:var(--muted); padding:.5rem; background:var(--cream); border:1px dashed var(--border); margin-top:.5rem; }
+.dt-footer { border-top:1px dashed var(--border); padding:1rem 1.8rem; display:flex; justify-content:space-between; font-size:.8rem; color:var(--muted); flex-wrap:wrap; gap:.5rem; }
+.dt-footer strong { color:var(--ink); }
+
+/* INFO CARD */
+.info-card-box { background:white; border:1.5px solid var(--border); padding:1.5rem; margin:1rem 0; }
+.info-card-box .row { display:flex; justify-content:space-between; align-items:baseline; padding:.4rem 0; border-bottom:1px solid #f0ece4; font-size:.85rem; }
+.info-card-box .row:last-child { border-bottom:none; }
+.info-card-box .lbl { font-family:'Space Mono',monospace; font-size:.6rem; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+
+/* LOOKUP */
+.lookup-wrap { text-align:center; max-width:420px; margin:5rem auto; padding:0 2rem; }
+.lookup-wrap h2 { font-family:'Bebas Neue',cursive; font-size:2.5rem; margin-bottom:.5rem; }
+.lookup-wrap p  { color:var(--muted); font-size:.88rem; margin-bottom:2rem; line-height:1.6; }
+.lookup-row { display:flex; gap:.5rem; }
+.lookup-row input { flex:1; padding:.9rem 1rem; border:1.5px solid var(--border); font-family:'Space Mono',monospace; font-size:.85rem; letter-spacing:3px; outline:none; }
+.lookup-row input:focus { border-color:var(--ink); }
+
+/* ERROR */
+.state-error { text-align:center; padding:3rem 0; }
+.state-error .err-icon { font-size:4rem; margin-bottom:1rem; }
+.state-error h2 { font-family:'Bebas Neue',cursive; font-size:2.5rem; color:var(--red); margin-bottom:.5rem; }
+.state-error p { color:var(--muted); font-size:.9rem; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading"><div class="spinner"></div><div class="loading-text" id="loading-text">A carregar bilhete...</div></div>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <span class="nav-brand-top">Comissão de Festas</span>
+    <span class="nav-brand-main">VILA SECA 🎤</span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-btn" href="index.html">← Início</a>
+    <a class="nav-btn cta" href="comprar.html">Comprar Bilhete</a>
+  </div>
+</nav>
+
+<div class="ticket-wrap" id="ticket-wrap">
+
+  <!-- LOOKUP (shown when no code in URL) -->
+  <div id="state-lookup" style="display:none">
+    <div class="lookup-wrap">
+      <div class="badge-tag">🎟 O MEU BILHETE</div>
+      <h2>Ver Estado do Pedido</h2>
+      <p>Introduz o código do teu pedido para verificar o estado ou ver o teu bilhete.</p>
+      <div class="lookup-row">
+        <input type="text" id="lookup-input" placeholder="TC-XXXXXX" onkeydown="if(event.key==='Enter')doLookup()">
+        <button class="abtn green" onclick="doLookup()">Ver →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PENDING STATE -->
+  <div id="state-pending" style="display:none">
+    <div class="state-pending fadein">
+      <div class="pending-icon">⏳</div>
+      <h1 style="font-family:'Bebas Neue',cursive;font-size:2.5rem;margin-bottom:.4rem">Pagamento Pendente</h1>
+      <p style="color:var(--muted);margin-bottom:2rem;font-size:.9rem;line-height:1.7">O teu pedido foi recebido. A Comissão irá verificar o pagamento MBWay e ativar o teu bilhete.</p>
+      <div style="background:white;border:1.5px solid var(--border);overflow:hidden;margin-bottom:1.5rem">
+        <div style="background:var(--orange);padding:.8rem 1.2rem"><span style="font-family:'Bebas Neue',cursive;font-size:1.1rem;color:white;letter-spacing:2px">⏳ O QUE ACONTECE A SEGUIR</span></div>
+        <div style="padding:1.2rem">
+          <ol class="pending-steps">
+            <li>A Comissão recebe a notificação MBWay com o teu nome e valor <strong id="p-amt">—</strong></li>
+            <li>Um membro da Comissão confirma o pagamento no <strong>Painel Admin</strong></li>
+            <li>O teu bilhete é <strong>ativado automaticamente</strong></li>
+            <li>Volta a esta página para ver o teu <strong>QR Code</strong> atualizado 🎤</li>
+          </ol>
+        </div>
+      </div>
+      <div style="background:var(--ink);color:white;padding:1.2rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:.3rem">Código do pedido</div>
+          <div style="font-family:'Space Mono',monospace;font-size:1.1rem;letter-spacing:4px;color:var(--yellow)" id="p-code">—</div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:1px;text-transform:uppercase;background:rgba(224,123,16,.2);color:var(--orange);border:1px solid rgba(224,123,16,.4);padding:.3rem .7rem">⏳ PENDENTE</div>
+      </div>
+      <div class="info-card-box">
+        <div class="row"><span class="lbl">Nome</span><strong id="p-name">—</strong></div>
+        <div class="row"><span class="lbl">Email</span><span id="p-email">—</span></div>
+        <div class="row"><span class="lbl">Bilhetes</span><span id="p-qty">—</span></div>
+        <div class="row"><span class="lbl">Total</span><span id="p-total">—</span></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;justify-content:center">
+        <button class="btn-primary" onclick="reloadTicket()" style="font-size:1rem;padding:.8rem 1.5rem">↻ Atualizar Estado</button>
+        <a class="btn-ghost" href="index.html">← Início</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALID STATE -->
+  <div id="state-valid" style="display:none">
+    <div class="state-valid fadein">
+      <div class="valid-check">✓</div>
+      <h1 style="font-family:'Bebas Neue',cursive;font-size:2.5rem;margin-bottom:.3rem">Bilhete Confirmado!</h1>
+      <p style="color:var(--muted);margin-bottom:2rem;font-size:.9rem">Pagamento verificado pela Comissão · Bilhete ativo ✓</p>
+      <div class="digital-ticket">
+        <div class="dt-head">
+          <h3>STAND-UP NIGHT</h3>
+          <span class="org-tag">Vila Seca · 14 Jun 2025</span>
+        </div>
+        <div class="dt-body">
+          <div class="dt-qr" id="dt-qr"></div>
+          <div class="dt-code" id="dt-code">—</div>
+        </div>
+        <div class="dt-footer">
+          <div>Titular: <strong id="v-name">—</strong></div>
+          <div id="v-detail">—</div>
+        </div>
+      </div>
+      <div class="info-box" style="text-align:left">📱 <strong>Guarda esta página como favorito</strong> ou tira um screenshot do QR Code. Será lido à entrada do evento.</div>
+      <a class="btn-ghost" href="index.html" style="display:inline-flex;margin-top:1rem">← Voltar ao Início</a>
+    </div>
+  </div>
+
+  <!-- USED STATE -->
+  <div id="state-used" style="display:none">
+    <div class="state-valid fadein" style="text-align:center">
+      <div class="used-icon">✓</div>
+      <h1 style="font-family:'Bebas Neue',cursive;font-size:2.5rem;margin-bottom:.3rem;color:#888">Bilhete Já Utilizado</h1>
+      <p style="color:var(--muted);margin-bottom:2rem;font-size:.9rem">Este bilhete já foi validado na entrada do evento.</p>
+      <div class="info-card-box">
+        <div class="row"><span class="lbl">Nome</span><strong id="u-name">—</strong></div>
+        <div class="row"><span class="lbl">Código</span><span id="u-code">—</span></div>
+        <div class="row"><span class="lbl">Bilhetes</span><span id="u-qty">—</span></div>
+      </div>
+      <a class="btn-ghost" href="index.html" style="display:inline-flex;margin-top:1.5rem">← Voltar ao Início</a>
+    </div>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div id="state-error" style="display:none">
+    <div class="state-error fadein">
+      <div class="err-icon">🎟</div>
+      <h2>Bilhete Não Encontrado</h2>
+      <p>O código introduzido não existe ou foi removido.</p>
+      <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn-primary" onclick="showLookup()" style="font-size:1rem;padding:.8rem 1.5rem">Tentar Outro Código</button>
+        <a class="btn-ghost" href="comprar.html">Comprar Bilhete</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+var currentCode = null;
+
+function hideAll(){
+  ['state-lookup','state-pending','state-valid','state-used','state-error'].forEach(function(id){
+    document.getElementById(id).style.display = 'none';
+  });
+}
+
+function showLookup(){
+  hideAll();
+  document.getElementById('state-lookup').style.display = 'block';
+}
+
+function doLookup(){
+  var code = document.getElementById('lookup-input').value.trim();
+  if(!code){ toast('⚠ Introduz um código','err'); return; }
+  window.location.href = 'bilhete.html?codigo='+code;
+}
+
+function reloadTicket(){
+  if(currentCode) window.location.href = 'bilhete.html?codigo='+currentCode;
+}
+
+async function loadTicket(code){
+  // Rate limiting: max 20 lookups por minuto por browser
+  if(!RL.check('lookup', 20, 60000)) return;
+  showLoad('A carregar bilhete...');
+  try {
+    var t = await getTicketByCode(code);
+    hideLoad();
+    if(!t){
+      hideAll();
+      document.getElementById('state-error').style.display = 'block';
+      return;
+    }
+    currentCode = t.code;
+    if(t.status === 'pending'){
+      hideAll();
+      document.getElementById('state-pending').style.display = 'block';
+      setEl('p-code', t.code);
+      setEl('p-name', t.name);
+      setEl('p-email', t.email);
+      setEl('p-qty', t.qty+' bilhete(s)');
+      setEl('p-total', t.total+' €');
+      setEl('p-amt', t.total+' €');
+    } else if(t.status === 'valid' || t.status === 'presencial'){
+      hideAll();
+      document.getElementById('state-valid').style.display = 'block';
+      setEl('v-name', t.name);
+      setEl('dt-code', t.code);
+      setEl('v-detail', t.qty+' bilhete(s) · '+t.total+' €');
+      generateQR(document.getElementById('dt-qr'),
+        JSON.stringify({code:t.code, name:t.name, qty:t.qty, event:'Stand-Up Night Vila Seca', date:'14 Jun 2025'}),
+        200
+      );
+    } else if(t.status === 'used'){
+      hideAll();
+      document.getElementById('state-used').style.display = 'block';
+      setEl('u-name', t.name);
+      setEl('u-code', t.code);
+      setEl('u-qty', t.qty+' bilhete(s)');
+    }
+  } catch(e){
+    hideLoad();
+    toast('⚠ Erro de ligação. Tenta novamente.','err');
+    console.error(e);
+  }
+}
+
+// On load — check URL for ?codigo=
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var code = params.get('codigo');
+  if(code){
+    loadTicket(code.trim());
+  } else {
+    showLookup();
+  }
+})();
+</script>
+</body>
+</html>

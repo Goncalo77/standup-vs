@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Vila Seca Stand-Up Night</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.admin-login-wrap { max-width:420px; margin:7rem auto; padding:0 2rem; }
+.admin-login-wrap h2 { font-family:'Bebas Neue',cursive; font-size:2.8rem; margin-bottom:.3rem; }
+.admin-login-wrap .sub { color:var(--muted); font-size:.85rem; margin-bottom:2rem; }
+.demo-hint { font-family:'Space Mono',monospace; font-size:.62rem; color:var(--muted); background:var(--cream); border:1px dashed var(--border); padding:.6rem 1rem; margin-top:1rem; letter-spacing:1px; }
+.admin-dash { padding:2.5rem; max-width:1300px; margin:0 auto; }
+.dash-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:2.5rem; padding-bottom:1.5rem; border-bottom:2px solid var(--ink); flex-wrap:wrap; gap:1rem; }
+.dash-top h2 { font-family:'Bebas Neue',cursive; font-size:2.2rem; line-height:1; }
+.event-tag { font-family:'Space Mono',monospace; font-size:.62rem; color:var(--muted); letter-spacing:2px; margin-top:.3rem; }
+.dash-actions { display:flex; gap:.8rem; align-items:center; flex-wrap:wrap; }
+.pending-alert { display:inline-flex; align-items:center; gap:.5rem; background:var(--orange); color:white; font-family:'Space Mono',monospace; font-size:.62rem; letter-spacing:1px; padding:.4rem .9rem; border-radius:2px; animation:pulse-bg 1.5s infinite; }
+.pending-alert .dot { width:8px; height:8px; background:white; border-radius:50%; }
+.stats-row { display:grid; grid-template-columns:repeat(5,1fr); gap:1.2rem; margin-bottom:2.5rem; }
+.scard { background:white; border:1.5px solid var(--border); padding:1.5rem; }
+.scard.dark { background:var(--ink); color:white; }
+.scard.oc   { background:var(--orange); color:white; border-color:var(--orange); }
+.scard .sv  { font-family:'Bebas Neue',cursive; font-size:3rem; line-height:1; }
+.scard .sl  { font-family:'Space Mono',monospace; font-size:.55rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-top:.25rem; }
+.scard.dark .sl, .scard.oc .sl { color:rgba(255,255,255,.6); }
+.sv.yellow { color:var(--yellow); }
+.sv.green  { color:var(--green); }
+.sv.white  { color:white; }
+.section-label { font-family:'Bebas Neue',cursive; font-size:1.4rem; margin-bottom:1rem; display:flex; align-items:center; gap:.8rem; }
+.admin-main { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2rem; }
+.acard { background:white; border:1.5px solid var(--border); padding:2rem; }
+.acard h3 { font-family:'Bebas Neue',cursive; font-size:1.4rem; margin-bottom:1.5rem; }
+.acard.ob { border-color:var(--orange); border-width:2px; }
+.acard.ob h3 { color:var(--orange); }
+.filter-bar { display:flex; gap:.6rem; margin-bottom:1.2rem; flex-wrap:wrap; }
+.filter-bar input, .filter-bar select { padding:.55rem .8rem; border:1.5px solid var(--border); font-family:'Space Mono',monospace; font-size:.7rem; outline:none; background:white; }
+.filter-bar input { flex:1; min-width:160px; }
+.filter-bar input:focus, .filter-bar select:focus { border-color:var(--ink); }
+.filter-bar select { cursor:pointer; }
+/* STOCK MGMT */
+.stock-mgmt { background:white; border:1.5px solid var(--border); padding:2rem; margin-top:2rem; }
+.stock-mgmt h3 { font-family:'Bebas Neue',cursive; font-size:1.4rem; margin-bottom:1.5rem; }
+.stock-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-bottom:1.5rem; }
+.ss-box { background:var(--cream); border:1.5px solid var(--border); padding:1.2rem; }
+.ss-lbl { font-family:'Space Mono',monospace; font-size:.55rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:.5rem; }
+.ss-val { font-family:'Bebas Neue',cursive; font-size:2.5rem; line-height:1; }
+.occ-bar-wrap { margin-top:1rem; }
+.occ-bar-top  { display:flex; justify-content:space-between; margin-bottom:.4rem; font-family:'Space Mono',monospace; font-size:.62rem; color:var(--muted); }
+.occ-bar-top strong { font-family:'Bebas Neue',cursive; font-size:1.1rem; color:var(--ink); }
+.occ-bar  { height:10px; background:#e0dbd0; border-radius:5px; overflow:hidden; }
+.occ-fill { height:10px; background:var(--yellow); border-radius:5px; transition:width .5s; }
+.cap-edit { display:flex; align-items:center; gap:1rem; padding-top:1.5rem; border-top:1px solid var(--border); flex-wrap:wrap; }
+.cap-edit label { font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+.cap-edit input { width:90px; padding:.6rem .8rem; border:1.5px solid var(--border); font-family:'Bebas Neue',cursive; font-size:1.5rem; text-align:center; outline:none; }
+.cap-edit input:focus { border-color:var(--ink); }
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; display:none; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:white; padding:2.5rem; max-width:460px; width:90%; position:relative; animation:pop .3s ease; }
+.modal h3 { font-family:'Bebas Neue',cursive; font-size:2rem; margin-bottom:.3rem; }
+.modal .sub { color:var(--muted); font-size:.82rem; margin-bottom:2rem; }
+.modal-close { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--muted); }
+/* REJECT MODAL */
+.reject-icon { width:70px; height:70px; background:var(--red); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 1.5rem; }
+.reject-info { background:var(--cream); border:1.5px solid var(--border); padding:1.2rem; margin:1.5rem 0; }
+.reject-info .ri-row { display:flex; justify-content:space-between; padding:.35rem 0; font-size:.85rem; }
+.reject-info .ri-row:not(:last-child) { border-bottom:1px solid var(--border); }
+.reject-info .ri-lbl { font-family:'Space Mono',monospace; font-size:.6rem; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+.reject-actions { display:flex; gap:1rem; margin-top:1.5rem; }
+.reject-actions button { flex:1; padding:.85rem; font-size:.9rem; cursor:pointer; border:1.5px solid var(--border); font-family:inherit; transition:all .15s; }
+.reject-actions .btn-cancel { background:white; color:var(--ink); }
+.reject-actions .btn-cancel:hover { background:var(--cream); }
+.reject-actions .btn-reject { background:var(--red); color:white; border-color:var(--red); }
+.reject-actions .btn-reject:hover { opacity:.85; }
+@media(max-width:900px) {
+  .stats-row   { grid-template-columns:1fr 1fr; }
+  .admin-main  { grid-template-columns:1fr; }
+  .stock-stats { grid-template-columns:1fr 1fr; }
+  .admin-dash  { padding:1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading"><div class="spinner"></div><div class="loading-text" id="loading-text">A carregar...</div></div>
+
+<nav>
+  <a class="nav-brand" href="index.html">
+    <span class="nav-brand-top">Comissão de Festas</span>
+    <span class="nav-brand-main">VILA SECA 🎤</span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-btn" href="index.html">← Site</a>
+    <span class="nav-btn active" style="cursor:default">⚙ Admin</span>
+  </div>
+</nav>
+
+<!-- LOGIN -->
+<div id="admin-login" class="admin-login-wrap">
+  <div class="badge-tag">⚙ Área Restrita</div>
+  <h2>Painel Admin</h2>
+  <p class="sub">Acesso exclusivo à Comissão de Festas de Vila Seca</p>
+  <div class="field"><label>Email</label><input type="email" id="a-user" placeholder="admin@exemplo.com"></div>
+  <div class="field"><label>Palavra-passe</label><input type="password" id="a-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+  <button class="submit-btn" onclick="doLogin()">Entrar →</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="admin-dash" style="display:none">
+  <div class="admin-dash">
+    <div class="dash-top">
+      <div>
+        <h2>Painel de Controlo</h2>
+        <div class="event-tag">Stand-Up Comedy Night · Vila Seca · 14 Jun 2025</div>
+      </div>
+      <div class="dash-actions">
+        <div class="pending-alert" id="pa" style="display:none"><div class="dot"></div><span id="pa-txt"></span></div>
+        <button class="abtn yellow-btn" onclick="openPresencialModal()">+ Venda Presencial</button>
+        <button class="abtn" onclick="refreshAdmin()">↻ Atualizar</button>
+        <button class="abtn red" onclick="doLogout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="scard oc"><div class="sv white" id="d-pend">—</div><div class="sl">⏳ Por Confirmar</div></div>
+      <div class="scard dark"><div class="sv yellow" id="d-sold">—</div><div class="sl">✓ Confirmados</div></div>
+      <div class="scard"><div class="sv" id="d-avail">—</div><div class="sl">Disponíveis</div></div>
+      <div class="scard"><div class="sv green" id="d-used">—</div><div class="sl">Usados na Entrada</div></div>
+      <div class="scard"><div class="sv" id="d-rev">—</div><div class="sl">Receita (€)</div></div>
+    </div>
+
+    <div class="section-label">
+      ⏳ Pagamentos Pendentes de Confirmação
+      <span id="pb" style="background:var(--orange);color:white;font-family:'Space Mono',monospace;font-size:.6rem;padding:.2rem .6rem;border-radius:2px"></span>
+    </div>
+    <div class="acard ob" style="margin-bottom:2rem">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Código</th><th>Nome</th><th>Tel. MBWay</th><th>Qtd</th><th>Total</th><th>Data</th><th>Ação</th></tr></thead>
+          <tbody id="pending-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="acard" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:200px">
+        <div style="font-size:3rem;margin-bottom:1rem">📷</div>
+        <h3 style="margin-bottom:.5rem">Validar Entrada</h3>
+        <p style="color:var(--muted);font-size:.82rem;margin-bottom:1.5rem">Scanner QR Code e validação manual de bilhetes</p>
+        <a class="abtn green" href="validar.html" style="font-size:.85rem;padding:.7rem 1.5rem;text-decoration:none">Abrir Validação →</a>
+      </div>
+      <div class="acard">
+        <h3>🎟️ Todos os Bilhetes</h3>
+        <div class="filter-bar">
+          <input type="text" id="f-search" placeholder="Pesquisar nome ou código..." oninput="applyFilters()">
+          <select id="f-status" onchange="applyFilters()">
+            <option value="">Todos os estados</option>
+            <option value="pending">Pendente</option>
+            <option value="valid">Confirmado</option>
+            <option value="presencial">Presencial</option>
+            <option value="used">Usado</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+          <select id="f-canal" onchange="applyFilters()">
+            <option value="">Todos os canais</option>
+            <option value="online">Online</option>
+            <option value="presencial">Presencial</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Código</th><th>Nome</th><th>Canal</th><th>Qtd</th><th>Total</th><th>Estado</th><th>Ação</th></tr></thead>
+            <tbody id="t-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="stock-mgmt">
+      <h3>📦 Gestão de Capacidade</h3>
+      <div class="stock-stats">
+        <div class="ss-box"><div class="ss-lbl">Capacidade Total</div><div class="ss-val" id="sc-total">—</div></div>
+        <div class="ss-box"><div class="ss-lbl">Confirmados</div><div class="ss-val" id="sc-sold">—</div></div>
+        <div class="ss-box"><div class="ss-lbl">Livres</div><div class="ss-val" style="color:var(--green)" id="sc-free">—</div></div>
+      </div>
+      <div class="occ-bar-wrap">
+        <div class="occ-bar-top"><span>Ocupação</span><strong id="sc-pct">—</strong></div>
+        <div class="occ-bar"><div class="occ-fill" id="sc-bar" style="width:0%"></div></div>
+      </div>
+      <div class="cap-edit">
+        <label>Alterar capacidade:</label>
+        <input type="number" id="cap-in" min="1" max="9999">
+        <button class="abtn green" onclick="updateCap()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VENDA PRESENCIAL -->
+<div class="modal-overlay" id="presencial-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closePresencialModal()">✕</button>
+    <h3>Venda Presencial</h3>
+    <p class="sub">Pagamento recebido em mãos · Bilhete confirmado de imediato</p>
+    <div class="field"><label>Nome *</label><input type="text" id="p-name" placeholder="Nome da pessoa"></div>
+    <div class="field"><label>Email *</label><input type="email" id="p-email" placeholder="Para enviar o link do bilhete"></div>
+    <div class="field">
+      <label>Nº de Bilhetes</label>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changePQty(-1)">−</button>
+        <span class="qty-num" id="p-qty-num">1</span>
+        <button class="qty-btn" onclick="changePQty(1)">+</button>
+      </div>
+    </div>
+    <div style="background:var(--cream);border:1.5px solid var(--border);padding:1rem;margin-bottom:1rem;font-size:.82rem">
+      Total a cobrar: <strong id="p-total-lbl">9 €</strong>
+    </div>
+    <button class="submit-btn" id="btn-presencial" onclick="submitPresencial()">✓ Confirmar Venda Presencial</button>
+  </div>
+</div>
+
+<!-- MODAL REJEITAR PEDIDO -->
+<div class="modal-overlay" id="reject-modal">
+  <div class="modal" style="text-align:center">
+    <button class="modal-close" onclick="closeRejectModal()">✕</button>
+    <div class="reject-icon">✗</div>
+    <h3 style="color:var(--red)">Rejeitar Pedido?</h3>
+    <p class="sub">Esta ação é irreversível. O pedido será eliminado permanentemente.</p>
+    <div class="reject-info" style="text-align:left">
+      <div class="ri-row"><span class="ri-lbl">Código</span><strong id="rj-code">—</strong></div>
+      <div class="ri-row"><span class="ri-lbl">Nome</span><strong id="rj-name">—</strong></div>
+      <div class="ri-row"><span class="ri-lbl">Bilhetes</span><span id="rj-qty">—</span></div>
+      <div class="ri-row"><span class="ri-lbl">Total</span><span id="rj-total">—</span></div>
+    </div>
+    <div class="reject-actions">
+      <button class="btn-cancel" onclick="closeRejectModal()">Cancelar</button>
+      <button class="btn-reject" id="btn-reject" onclick="confirmReject()">Rejeitar Pedido</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+/* ---- LOGIN ---- */
+async function doLogin(){
+  var email = document.getElementById('a-user').value.trim();
+  var pass  = document.getElementById('a-pass').value;
+  if(!email || !pass){ toast('⚠ Preenche todos os campos','err'); return; }
+  showLoad('A verificar credenciais...');
+  try {
+    var ok = await loginAdmin(email, pass);
+    if(ok){
+      showDash();
+      toast('✓ Bem-vindo, Administrador!','ok');
+    } else {
+      toast('⚠ Credenciais incorretas','err');
+    }
+  } catch(e){
+    toast('⚠ Erro de ligação ao servidor','err');
+    console.error(e);
+  } finally { hideLoad(); }
+}
+
+function showDash(){
+  document.getElementById('admin-login').style.display = 'none';
+  document.getElementById('admin-dash').style.display = 'block';
+  refreshAdmin();
+  startAutoRefresh();
+}
+
+function doLogout(){
+  stopAutoRefresh();
+  logoutAdmin();
+  document.getElementById('admin-login').style.display = 'block';
+  document.getElementById('admin-dash').style.display  = 'none';
+  document.getElementById('a-user').value = '';
+  document.getElementById('a-pass').value = '';
+}
+
+// Restaurar sessão ao carregar a página
+if(restoreAdminSession()){
+  showDash();
+}
+
+/* ---- DASHBOARD ---- */
+var _autoRefreshTimer = null;
+var _lastPendCount = 0;
+
+async function refreshAdmin(silent){
+  if(!silent) showLoad('A atualizar...');
+  try {
+    var tickets = await getTickets();
+    var cap = await getCapacity();
+    var confirmed = tickets.filter(function(t){return t.status!=='pending' && t.status!=='cancelled';}).reduce(function(a,t){return a+t.qty;},0);
+    var pend   = tickets.filter(function(t){return t.status==='pending';});
+    var pendQty = pend.reduce(function(a,t){return a+t.qty;},0);
+    var avail  = Math.max(0, cap-confirmed);
+    var used   = tickets.filter(function(t){return t.status==='used';}).reduce(function(a,t){return a+t.qty;},0);
+    var rev    = tickets.filter(function(t){return t.status!=='pending' && t.status!=='cancelled';}).reduce(function(a,t){return a+t.total;},0);
+    var pct    = cap>0 ? Math.round((confirmed/cap)*100) : 0;
+
+    setEl('d-pend',pendQty); setEl('d-sold',confirmed); setEl('d-avail',avail);
+    setEl('d-used',used); setEl('d-rev',rev+' €');
+    setEl('sc-total',cap); setEl('sc-sold',confirmed); setEl('sc-free',avail);
+    setEl('sc-pct',pct+'%'); setBar('sc-bar',pct);
+    var ci = document.getElementById('cap-in'); if(ci) ci.value = cap;
+
+    var pa = document.getElementById('pa');
+    if(pend.length > 0){
+      if(pa) pa.style.display = 'inline-flex';
+      setEl('pa-txt', pend.length+' pagamento'+(pend.length>1?'s':'')+' por confirmar');
+      setEl('pb', pend.length);
+    } else {
+      if(pa) pa.style.display = 'none';
+      setEl('pb','');
+    }
+
+    // Notificar se chegaram novos pedidos pendentes
+    if(silent && pend.length > _lastPendCount && _lastPendCount >= 0){
+      toast('🔔 Novo pedido pendente! ('+pend.length+' total)','warn');
+    }
+    _lastPendCount = pend.length;
+
+    renderPendingTable(pend);
+    renderAllTable(tickets);
+  } catch(e){
+    if(!silent) toast('⚠ Erro ao carregar dados','err');
+    console.error(e);
+  } finally { if(!silent) hideLoad(); }
+}
+
+function startAutoRefresh(){
+  stopAutoRefresh();
+  _autoRefreshTimer = setInterval(function(){ refreshAdmin(true); }, 30000);
+}
+
+function stopAutoRefresh(){
+  if(_autoRefreshTimer){ clearInterval(_autoRefreshTimer); _autoRefreshTimer = null; }
+}
+
+// Parar polling quando o tab não está visível, retomar quando volta
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden){
+    stopAutoRefresh();
+  } else if(_adminToken){
+    refreshAdmin(true);
+    startAutoRefresh();
+  }
+});
+
+var _pendingMap = {};
+
+function renderPendingTable(pend){
+  var tbody = document.getElementById('pending-tbody'); if(!tbody) return;
+  _pendingMap = {};
+  pend.forEach(function(t){ _pendingMap[t.code] = t; });
+  if(!pend.length){
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;font-family:\'Space Mono\',monospace;font-size:.72rem;color:var(--muted)">Nenhum pagamento pendente 🎉</td></tr>';
+    return;
+  }
+  tbody.innerHTML = pend.map(function(t){
+    return '<tr class="pr">'+
+      '<td style="font-family:\'Space Mono\',monospace;font-size:.62rem;letter-spacing:1px">'+t.code+'</td>'+
+      '<td><strong>'+t.name+'</strong><br><span style="font-size:.72rem;color:var(--muted)">'+t.email+'</span></td>'+
+      '<td style="font-family:\'Space Mono\',monospace;font-size:.75rem">'+t.phone+'</td>'+
+      '<td style="text-align:center">'+t.qty+'</td>'+
+      '<td><strong>'+t.total+' €</strong></td>'+
+      '<td style="font-family:\'Space Mono\',monospace;font-size:.68rem">'+(t.request_date||'—')+'</td>'+
+      '<td><div style="display:flex;gap:.4rem">'+
+        '<button class="abtn green" onclick="confirmTicket(\''+t.code+'\')">✓ Confirmar</button>'+
+        '<button class="abtn red" onclick="rejectTicket(\''+t.code+'\',\''+t.name.replace(/'/g,"\\'")+'\','+t.qty+','+t.total+')">✗ Rejeitar</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+}
+
+var _allTickets = [];
+
+function renderAllTable(tickets){
+  _allTickets = tickets;
+  applyFilters();
+}
+
+function applyFilters(){
+  var search = (document.getElementById('f-search').value || '').toLowerCase();
+  var status = document.getElementById('f-status').value;
+  var canal  = document.getElementById('f-canal').value;
+  var filtered = _allTickets.filter(function(t){
+    if(search && t.name.toLowerCase().indexOf(search)===-1 && t.code.toLowerCase().indexOf(search)===-1) return false;
+    if(status && t.status!==status) return false;
+    if(canal && t.source!==canal) return false;
+    return true;
+  });
+  var tbody = document.getElementById('t-body'); if(!tbody) return;
+  if(!filtered.length){
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;font-family:\'Space Mono\',monospace;font-size:.72rem;color:var(--muted)">Nenhum bilhete encontrado</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(function(t){
+    var label = t.status==='valid'?'✓ Confirmado':t.status==='used'?'Usado':t.status==='presencial'?'Presencial':t.status==='cancelled'?'✗ Cancelado':'⏳ Pendente';
+    var pClass= t.status==='valid'?'valid':t.status==='used'?'used':t.status==='presencial'?'presencial':t.status==='cancelled'?'cancelled':'pending';
+    var canal = t.source==='presencial'?'🤝 Presencial':'🌐 Online';
+    var canResend = (t.status==='valid' || t.status==='presencial');
+    var actionCol = canResend
+      ? '<button class="abtn" style="font-size:.68rem;padding:.3rem .6rem" onclick="resendEmail(\''+t.code+'\')">📧 Reenviar</button>'
+      : '';
+    return '<tr class="'+(t.status==='pending'?'pr':'')+'">'+
+      '<td style="font-family:\'Space Mono\',monospace;font-size:.62rem;letter-spacing:1px">'+t.code+'</td>'+
+      '<td>'+t.name+'</td>'+
+      '<td style="font-size:.75rem">'+canal+'</td>'+
+      '<td style="text-align:center">'+t.qty+'</td>'+
+      '<td>'+t.total+' €</td>'+
+      '<td><span class="pill '+pClass+'">'+label+'</span></td>'+
+      '<td>'+actionCol+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+async function confirmTicket(code){
+  var t = _pendingMap[code];
+  if(!t){ toast('⚠ Ticket não encontrado','err'); return; }
+  showLoad('A confirmar bilhete...');
+  try {
+    await updateTicket(code, { status:'valid', confirmed_date:today() });
+    await refreshAdmin();
+    toast('✓ '+code+' confirmado! '+t.name+' · '+t.total+' €','ok');
+    // Enviar email em background (não bloqueia a confirmação)
+    try {
+      await sendTicketEmail({ code:t.code, name:t.name, email:t.email, qty:t.qty, total:t.total });
+      toast('📧 Email enviado para '+t.email,'ok');
+    } catch(emailErr){
+      console.error('Email error:', emailErr);
+      toast('⚠ Bilhete confirmado, mas erro ao enviar email. Usa "Reenviar" na tabela.','warn');
+    }
+  } catch(e){ toast('⚠ Erro ao confirmar','err'); hideLoad(); }
+}
+
+var _rejectCode = null;
+
+function rejectTicket(code, name, qty, total){
+  _rejectCode = code;
+  setEl('rj-code', code);
+  setEl('rj-name', name || '—');
+  setEl('rj-qty', (qty || 1)+' bilhete(s)');
+  setEl('rj-total', (total || 0)+' €');
+  document.getElementById('reject-modal').classList.add('open');
+}
+
+function closeRejectModal(){
+  document.getElementById('reject-modal').classList.remove('open');
+  _rejectCode = null;
+}
+
+async function confirmReject(){
+  if(!_rejectCode) return;
+  var code = _rejectCode;
+  var btn = document.getElementById('btn-reject');
+  btn.disabled = true; btn.textContent = 'A rejeitar...';
+  showLoad('A rejeitar pedido...');
+  try {
+    await updateTicket(code, { status:'cancelled' });
+    closeRejectModal();
+    await refreshAdmin();
+    toast('Pedido '+code+' rejeitado.','warn');
+  } catch(e){
+    toast('⚠ Erro ao rejeitar','err');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Rejeitar Pedido';
+    hideLoad();
+  }
+}
+
+async function updateCap(){
+  var v = parseInt(document.getElementById('cap-in').value);
+  if(!v||v<1){ toast('⚠ Valor inválido','err'); return; }
+  showLoad('A guardar...');
+  try {
+    await setCapacity(v);
+    await refreshAdmin();
+    toast('✓ Capacidade atualizada para '+v+' lugares','ok');
+  } catch(e){ toast('⚠ Erro ao guardar','err'); hideLoad(); }
+}
+
+/* ---- PRESENCIAL ---- */
+var pQty = 1;
+function changePQty(d){ pQty=Math.max(1,Math.min(10,pQty+d)); setEl('p-qty-num',pQty); setEl('p-total-lbl',(pQty*CFG.price)+' €'); }
+function openPresencialModal(){ document.getElementById('presencial-modal').classList.add('open'); }
+function closePresencialModal(){
+  document.getElementById('presencial-modal').classList.remove('open');
+  document.getElementById('p-name').value = '';
+  document.getElementById('p-email').value = '';
+  pQty=1; setEl('p-qty-num',1); setEl('p-total-lbl',CFG.price+' €');
+}
+
+async function submitPresencial(){
+  var name  = document.getElementById('p-name').value.trim();
+  var email = document.getElementById('p-email').value.trim();
+  if(!name){ toast('⚠ Introduz o nome','err'); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('⚠ Email inválido','err'); return; }
+  var btn = document.getElementById('btn-presencial');
+  btn.disabled=true; btn.textContent='A registar...';
+  showLoad('A registar venda presencial...');
+  try {
+    var code = genCode('TP');
+    var d = today();
+    var totalVal = pQty * CFG.price;
+    await insertPresencialTicket({
+      code:code, name:name, email:email,
+      qty:pQty, total:totalVal,
+      request_date:d, confirmed_date:d
+    });
+    closePresencialModal();
+    await refreshAdmin();
+    toast('✓ Venda presencial! '+code+' · '+name,'ok');
+    // Open ticket in new tab
+    window.open('bilhete.html?codigo='+code, '_blank');
+    // Enviar email em background
+    try {
+      await sendTicketEmail({ code:code, name:name, email:email, qty:pQty, total:totalVal });
+      toast('📧 Email enviado para '+email,'ok');
+    } catch(emailErr){
+      console.error('Email error:', emailErr);
+      toast('⚠ Venda registada, mas erro ao enviar email. Usa "Reenviar" na tabela.','warn');
+    }
+  } catch(e){
+    toast('⚠ Erro ao registar venda','err');
+    console.error(e);
+  } finally { btn.disabled=false; btn.textContent='✓ Confirmar Venda Presencial'; hideLoad(); }
+}
+
+/* ---- REENVIAR EMAIL ---- */
+async function resendEmail(code){
+  var t = _allTickets.find(function(tk){ return tk.code === code; });
+  if(!t){ toast('⚠ Bilhete não encontrado','err'); return; }
+  toast('📧 A enviar email...','');
+  try {
+    await sendTicketEmail({ code:t.code, name:t.name, email:t.email, qty:t.qty, total:t.total });
+    toast('📧 Email reenviado para '+t.email,'ok');
+  } catch(e){
+    console.error('Resend error:', e);
+    toast('⚠ Erro ao reenviar email','err');
+  }
+}
+
+</script>
+</body>
+</html>
