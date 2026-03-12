@@ -231,10 +231,16 @@ async function loadTicket(code){
       setEl('v-name', t.name);
       setEl('dt-code', t.code);
       setEl('v-detail', t.qty+' bilhete(s) · '+t.total+' €');
-      generateQR(document.getElementById('dt-qr'),
-        JSON.stringify({code:t.code, name:t.name, qty:t.qty, event:'Stand-Up Night Vila Seca', date:'14 Jun 2025'}),
-        200
-      );
+      var qrEl = document.getElementById('dt-qr');
+      var ticketUrl = window.location.origin + '/bilhete.html?codigo=' + t.code;
+      var qrImg = document.createElement('img');
+      qrImg.src = 'https://quickchart.io/qr?text=' + encodeURIComponent(ticketUrl) + '&size=200&margin=2&dark=0d0d0d&light=ffffff&format=png';
+      qrImg.width = 200;
+      qrImg.height = 200;
+      qrImg.alt = 'QR Code';
+      qrImg.style.display = 'block';
+      qrEl.innerHTML = '';
+      qrEl.appendChild(qrImg);
     } else if(t.status === 'used'){
       hideAll();
       document.getElementById('state-used').style.display = 'block';
