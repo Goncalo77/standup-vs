@@ -96,7 +96,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/[email protected]/dist/jsQR.js"></script>
+<script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
 <script>
@@ -134,15 +134,23 @@ function stopScanner(){
   if(sz) sz.style.display = 'flex';
 }
 
+var _frameCount = 0;
 function doFrame(){
   if(!scanning) return;
   var v=document.getElementById('scanner-video'), c=document.getElementById('scanner-canvas');
+  _frameCount++;
   if(v&&v.readyState===v.HAVE_ENOUGH_DATA&&c&&window.jsQR){
     c.width=v.videoWidth; c.height=v.videoHeight;
     var ctx=c.getContext('2d'); ctx.drawImage(v,0,0);
     var img=ctx.getImageData(0,0,c.width,c.height);
-    var qr=window.jsQR(img.data,img.width,img.height);
-    if(qr){ validateCode(qr.data); stopScanner(); return; }
+    if(_frameCount % 60 === 0) console.log('Scanning frame', _frameCount, 'video:', v.videoWidth+'x'+v.videoHeight);
+    var qr=window.jsQR(img.data,img.width,img.height,{inversionAttempts:'dontInvert'});
+    if(qr){
+      console.log('QR detected:', qr.data);
+      validateCode(qr.data); stopScanner(); return;
+    }
+  } else if(_frameCount % 60 === 0){
+    console.log('Waiting... readyState:', v?v.readyState:'no-video', 'jsQR:', !!window.jsQR);
   }
   requestAnimationFrame(doFrame);
 }
