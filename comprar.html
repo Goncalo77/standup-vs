@@ -6,7 +6,7 @@
 <title>Comprar Bilhete — Vila Seca Stand-Up Night</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.buy-wrap { max-width:960px; margin:0 auto; padding:3rem 2rem; display:grid; grid-template-columns:1.1fr .9fr; gap:2.5rem; align-items:start; }
+.buy-wrap { max-width:860px; margin:0 auto; padding:2.5rem 1.5rem; display:grid; grid-template-columns:1.2fr .8fr; gap:2rem; align-items:start; }
 .steps-bar { display:flex; margin-bottom:2rem; border:1.5px solid var(--border); overflow:hidden; }
 .step-tab { flex:1; padding:.9rem .5rem; text-align:center; font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:1px; text-transform:uppercase; color:var(--muted); background:var(--cream); border-right:1.5px solid var(--border); transition:all .2s; }
 .step-tab:last-child { border-right:none; }
@@ -22,7 +22,11 @@
 .mbway-steps li { counter-increment:mbs; font-size:.82rem; color:#bbb; padding:.3rem 0 .3rem 1.6rem; position:relative; line-height:1.5; }
 .mbway-steps li::before { content:counter(mbs); position:absolute; left:0; font-family:'Bebas Neue',cursive; color:var(--yellow); font-size:.95rem; }
 .mbway-steps strong { color:white; }
-.mbway-number { font-family:'Bebas Neue',cursive; font-size:1.9rem; color:var(--yellow); letter-spacing:4px; margin-top:.8rem; padding:.7rem 1rem; background:rgba(240,192,48,.1); border:1px solid rgba(240,192,48,.3); display:inline-block; }
+.mbway-number-wrap { display:inline-flex; align-items:center; gap:.6rem; margin-top:.8rem; padding:.7rem 1rem; background:rgba(240,192,48,.1); border:1px solid rgba(240,192,48,.3); }
+.mbway-number { font-family:'Bebas Neue',cursive; font-size:1.9rem; color:var(--yellow); letter-spacing:4px; }
+.mbway-copy { background:var(--yellow); color:var(--ink); border:none; font-family:'Space Mono',monospace; font-size:.6rem; letter-spacing:1px; padding:.4rem .7rem; cursor:pointer; font-weight:700; transition:all .15s; white-space:nowrap; }
+.mbway-copy:hover { opacity:.85; }
+.mbway-copy.copied { background:var(--green); color:white; }
 .mbway-amount-lbl { font-family:'Space Mono',monospace; font-size:.7rem; color:#888; margin-top:.5rem; }
 .mbway-amount-lbl strong { color:var(--yellow); font-size:1.05rem; }
 .order-sidebar { background:var(--ink); color:white; padding:2rem; position:sticky; top:80px; }
@@ -102,7 +106,7 @@
           <ol class="mbway-steps">
             <li>Abre a <strong>app MB WAY</strong> no teu telemóvel</li>
             <li>Vai a <strong>"Pagar"</strong> → <strong>"Telemóvel"</strong></li>
-            <li>Introduz o número:<br><div class="mbway-number" id="pay-num">—</div></li>
+            <li>Introduz o número:<br><div class="mbway-number-wrap"><span class="mbway-number" id="pay-num">—</span><button class="mbway-copy" id="btn-copy" onclick="copyMbway()">COPIAR</button></div></li>
             <li>Introduz o valor:<br><div class="mbway-amount-lbl">Valor: <strong id="pay-amt">—</strong></div></li>
             <li>Coloca o teu <strong>nome</strong> na descrição</li>
             <li>Confirma e clica <strong>"Já Paguei"</strong> abaixo</li>
@@ -178,6 +182,19 @@ var qty = 1;
 function changeQty(d){
   qty = Math.max(1, Math.min(10, qty+d));
   setEl('q-num', qty); setEl('sb-qty', qty+'×'); setEl('sb-total', (qty*CFG.price)+' €');
+}
+
+function copyMbway(){
+  var num = CFG.mbway.replace(/\s/g,'');
+  navigator.clipboard.writeText(num).then(function(){
+    var btn = document.getElementById('btn-copy');
+    btn.textContent = 'COPIADO!';
+    btn.classList.add('copied');
+    setTimeout(function(){ btn.textContent = 'COPIAR'; btn.classList.remove('copied'); }, 2000);
+    toast('Número copiado!','ok');
+  }).catch(function(){
+    toast('Não foi possível copiar','err');
+  });
 }
 
 function goStep2(){
