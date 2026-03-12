@@ -50,7 +50,7 @@ async function insertPresencialTicket(t) {
   return await sbFetch('tickets', {
     method: 'POST',
     body: JSON.stringify({
-      code: t.code, name: t.name, email: t.email, phone: null,
+      code: t.code, name: t.name, email: t.email, phone: '',
       qty: t.qty, total: t.total,
       status: 'presencial', source: 'presencial',
       request_date: t.request_date, confirmed_date: t.confirmed_date
