@@ -153,6 +153,11 @@ function doFrame(){
 async function validateCode(raw){
   var code = raw.trim();
   try{ var p=JSON.parse(raw); if(p.code) code=p.code; }catch(e){}
+  // Extrair código de URLs (ex: bilhete.html?codigo=TC-xxx)
+  try {
+    var urlMatch = code.match(/[?&]codigo=([^&]+)/);
+    if(urlMatch) code = decodeURIComponent(urlMatch[1]);
+  } catch(e){}
   var fb = document.getElementById('scan-fb');
   fb.className = 'scan-fb'; fb.style.display = 'flex';
   setEl('sf-icon','⌛'); setEl('sf-name','A verificar...'); setEl('sf-detail','');
