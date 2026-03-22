@@ -4,10 +4,10 @@
 var CFG = {
   devMode: true,
   price: 9,
-  mbway: '962 727 821',
+  mbway: '935 031 902',
   event: {
     name: 'Stand-Up Comedy Night',
-    date: 'Sexta, 22 Maio 2025',
+    date: 'Sexta, 22 Maio 2026',
     dateShort: 'Sex 22 Mai',
     time: '21h30',
     venue: 'Auditório do Multiusos de Louredo',
