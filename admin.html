@@ -144,11 +144,22 @@
     </div>
 
     <div class="admin-main">
-      <div class="acard" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:200px">
-        <div style="font-size:3rem;margin-bottom:1rem">📷</div>
-        <h3 style="margin-bottom:.5rem">Validar Entrada</h3>
-        <p style="color:var(--muted);font-size:.82rem;margin-bottom:1.5rem">Scanner QR Code e validação manual de bilhetes</p>
-        <a class="abtn green" href="validar.html" style="font-size:.85rem;padding:.7rem 1.5rem;text-decoration:none">Abrir Validação →</a>
+      <div style="display:flex;flex-direction:column;gap:1.2rem">
+        <div class="acard" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:160px">
+          <div style="font-size:3rem;margin-bottom:1rem">📷</div>
+          <h3 style="margin-bottom:.5rem">Validar Entrada</h3>
+          <p style="color:var(--muted);font-size:.82rem;margin-bottom:1.5rem">Scanner QR Code e validação manual de bilhetes</p>
+          <a class="abtn green" href="validar.html" style="font-size:.85rem;padding:.7rem 1.5rem;text-decoration:none">Abrir Validação →</a>
+        </div>
+        <div class="acard">
+          <h3>🔍 Verificar Bilhete</h3>
+          <p style="color:var(--muted);font-size:.78rem;margin-bottom:1rem">Pesquisa por código, nome ou nº de telemóvel</p>
+          <div class="filter-bar" style="margin-bottom:0">
+            <input type="text" id="v-query" placeholder="TC-XXXXXX · nome · 9XXXXXXXX" onkeydown="if(event.key==='Enter')verifyLookup()">
+            <button class="abtn green" onclick="verifyLookup()">Verificar →</button>
+          </div>
+          <div id="v-result" style="display:none;margin-top:1.2rem"></div>
+        </div>
       </div>
       <div class="acard">
         <h3>🎟️ Todos os Bilhetes</h3>
@@ -529,6 +540,47 @@ async function submitPresencial(){
     toast('⚠ Erro ao registar venda','err');
     console.error(e);
   } finally { btn.disabled=false; btn.textContent='✓ Confirmar Venda Presencial'; hideLoad(); }
+}
+
+/* ---- VERIFICAR BILHETE ---- */
+function verifyLookup(){
+  var q = (document.getElementById('v-query').value || '').trim().toLowerCase();
+  if(!q){ toast('⚠ Introduz um código, nome ou telemóvel','err'); return; }
+  var t = _allTickets.find(function(tk){
+    return tk.code.toLowerCase() === q ||
+           tk.name.toLowerCase().indexOf(q) !== -1 ||
+           (tk.phone && tk.phone.replace(/\s/g,'').indexOf(q.replace(/\s/g,'')) !== -1);
+  });
+  var box = document.getElementById('v-result');
+  if(!t){
+    box.style.display = 'block';
+    box.innerHTML = '<div style="text-align:center;padding:1.2rem;background:var(--cream);border:1.5px solid var(--border);font-family:\'Space Mono\',monospace;font-size:.75rem;color:var(--muted)">Nenhum bilhete encontrado para "<strong>'+q+'</strong>"</div>';
+    return;
+  }
+  var statusMap = { valid:'✓ Confirmado', used:'Usado', presencial:'Presencial', pending:'⏳ Pendente', cancelled:'✗ Cancelado' };
+  var statusClass = { valid:'valid', used:'used', presencial:'presencial', pending:'pending', cancelled:'cancelled' };
+  var label = statusMap[t.status] || t.status;
+  var cls   = statusClass[t.status] || '';
+  box.style.display = 'block';
+  box.innerHTML =
+    '<div style="background:var(--cream);border:1.5px solid var(--border);padding:1.2rem">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem">'+
+        '<span style="font-family:\'Space Mono\',monospace;font-size:.65rem;letter-spacing:2px;color:var(--muted)">BILHETE ENCONTRADO</span>'+
+        '<span class="pill '+cls+'">'+label+'</span>'+
+      '</div>'+
+      '<div style="display:grid;gap:.4rem;font-size:.83rem">'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Código</span><strong style="font-family:\'Space Mono\',monospace;letter-spacing:2px">'+t.code+'</strong></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Nome</span><strong>'+t.name+'</strong></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Telemóvel</span><span>'+(t.phone||'—')+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Email</span><span>'+t.email+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Bilhetes</span><span>'+t.qty+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Total</span><strong>'+t.total+' €</strong></div>'+
+      '</div>'+
+      '<div style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap">'+
+        '<a class="abtn" href="bilhete.html?codigo='+t.code+'" target="_blank" style="font-size:.75rem;text-decoration:none">🎟️ Ver Bilhete</a>'+
+        ((t.status==='valid'||t.status==='presencial') ? '<button class="abtn" style="font-size:.75rem" onclick="resendEmail(\''+t.code+'\')">📧 Reenviar Email</button>' : '')+
+      '</div>'+
+    '</div>';
 }
 
 /* ---- REENVIAR EMAIL ---- */
