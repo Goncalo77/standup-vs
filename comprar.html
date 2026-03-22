@@ -92,6 +92,15 @@
             <span class="qty-hint">máx. 10 por pessoa</span>
           </div>
         </div>
+        <div class="field" style="margin-top:1.2rem">
+          <label style="display:flex;align-items:flex-start;gap:.7rem;cursor:pointer;font-weight:normal">
+            <input type="checkbox" id="f-rgpd" style="margin-top:.2rem;flex-shrink:0;width:16px;height:16px;accent-color:var(--ink)">
+            <span style="font-size:.82rem;color:var(--muted);line-height:1.6">
+              Li e aceito a <a href="privacidade.html" target="_blank" style="color:var(--ink);font-weight:700;text-decoration:underline">Política de Privacidade</a>.
+              Os meus dados serão usados exclusivamente para processar a compra e enviar o bilhete.
+            </span>
+          </label>
+        </div>
         <button class="submit-btn" onclick="goStep2()">Continuar para Pagamento →</button>
       </div>
     </div>
@@ -204,6 +213,7 @@ function goStep2(){
   if(!name)  { toast('⚠ Introduz o teu nome','err'); return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('⚠ Email inválido','err'); return; }
   if(phone.replace(/\s/g,'').length < 9) { toast('⚠ Telemóvel inválido (9 dígitos)','err'); return; }
+  if(!document.getElementById('f-rgpd').checked) { toast('⚠ Tens de aceitar a Política de Privacidade','err'); return; }
   document.getElementById('bs1').style.display = 'none';
   document.getElementById('bs2').style.display = 'block';
   document.getElementById('st1').classList.remove('active');
