@@ -22,14 +22,34 @@
 .meta-label { font-family:'Space Mono',monospace; font-size:.52rem; letter-spacing:3px; text-transform:uppercase; color:#555; margin-bottom:.2rem; }
 .meta-val { color:white; font-weight:700; font-size:1rem; }
 .hero-ctas { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
-.hero-right { position:relative; z-index:1; overflow:hidden; }
-.hero-artist-img { width:100%; height:100%; object-fit:cover; object-position:center top; display:block; filter:grayscale(10%); }
-.hero-artist-overlay { position:absolute; bottom:0; left:0; right:0; padding:2rem 2.5rem; background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.5) 60%,transparent 100%); }
-.hero-artist-label { font-family:'Space Mono',monospace; font-size:.52rem; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); margin-bottom:.4rem; }
-.hero-artist-name { font-family:'Bebas Neue',cursive; font-size:2.2rem; color:white; line-height:1; margin-bottom:.8rem; letter-spacing:1px; }
-.hero-artist-ig { display:inline-flex; align-items:center; gap:.5rem; color:#ccc; text-decoration:none; font-family:'Space Mono',monospace; font-size:.62rem; letter-spacing:1px; transition:color .2s; }
-.hero-artist-ig:hover { color:var(--yellow); }
-.hero-artist-ig svg { width:13px; height:13px; fill:currentColor; flex-shrink:0; }
+.hero-right { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem; padding:3rem 4rem 3rem 2rem; position:relative; z-index:1; }
+/* Artist mini card */
+.artist-card { display:flex; align-items:center; gap:1rem; background:rgba(255,255,255,.04); border:1px solid #222; border-left:3px solid var(--yellow); padding:.9rem 1.2rem; width:300px; }
+.artist-card-img { width:64px; height:64px; border-radius:50%; object-fit:cover; object-position:center top; flex-shrink:0; filter:grayscale(10%); }
+.artist-card-info { min-width:0; }
+.artist-card-label { font-family:'Space Mono',monospace; font-size:.48rem; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); margin-bottom:.2rem; }
+.artist-card-name { font-family:'Bebas Neue',cursive; font-size:1.15rem; color:white; line-height:1; margin-bottom:.35rem; letter-spacing:.5px; }
+.artist-card-ig { display:inline-flex; align-items:center; gap:.35rem; color:#777; text-decoration:none; font-family:'Space Mono',monospace; font-size:.55rem; letter-spacing:.5px; transition:color .2s; }
+.artist-card-ig:hover { color:var(--yellow); }
+.artist-card-ig svg { width:11px; height:11px; fill:currentColor; flex-shrink:0; }
+/* Ticket */
+.ticket-3d { position:relative; width:300px; }
+.ticket-shadow { position:absolute; inset:0; background:rgba(240,192,48,.15); transform:rotate(5deg) translate(12px,12px); border-radius:4px; }
+.ticket-main { position:relative; background:var(--cream); border-radius:4px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.6); }
+.t-head { background:var(--ink); padding:1.5rem 1.8rem; border-bottom:4px solid var(--yellow); text-align:center; }
+.t-head .org { font-family:'Space Mono',monospace; font-size:.52rem; letter-spacing:3px; text-transform:uppercase; color:#666; margin-bottom:.4rem; }
+.t-head h3 { font-family:'Bebas Neue',cursive; color:var(--yellow); font-size:1.6rem; letter-spacing:3px; }
+.t-tear { display:flex; justify-content:space-between; margin:0 -12px; position:relative; }
+.t-tear::before { content:''; position:absolute; left:12px; right:12px; top:50%; height:1px; background:repeating-linear-gradient(90deg,#bbb,#bbb 5px,transparent 5px,transparent 10px); }
+.t-dot { width:24px; height:24px; background:var(--ink); border-radius:50%; flex-shrink:0; }
+.t-body { padding:1.5rem 1.8rem; }
+.t-row { display:flex; justify-content:space-between; align-items:baseline; padding:.45rem 0; border-bottom:1px dashed #e0dbd0; font-size:.82rem; }
+.t-row:last-child { border-bottom:none; }
+.t-row .lbl { color:var(--muted); font-family:'Space Mono',monospace; font-size:.58rem; letter-spacing:1px; text-transform:uppercase; }
+.t-row .val { font-weight:700; }
+.t-price-wrap { text-align:center; padding:1rem 0 .5rem; border-top:2px solid var(--border); margin-top:.5rem; }
+.t-price { font-family:'Bebas Neue',cursive; font-size:3.5rem; color:var(--red); line-height:1; }
+.t-price-lbl { font-family:'Space Mono',monospace; font-size:.58rem; color:var(--muted); letter-spacing:2px; }
 .info-section { background:white; padding:5rem; }
 .info-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:3rem; }
 .info-card { border-top:3px solid var(--ink); padding-top:1.5rem; }
@@ -55,7 +75,6 @@
 @media(max-width:900px) {
   .hero { grid-template-columns:1fr; }
   .hero-right { display:none; }
-  .hero { min-height:auto; }
   .hero-left { padding:3rem 1.5rem; }
   .info-grid { grid-template-columns:1fr; }
   .info-section { padding:3rem 1.5rem; }
@@ -108,14 +127,30 @@
     </div>
   </div>
   <div class="hero-right">
-    <img class="hero-artist-img" src="img/joel.jpeg" alt="Joel Ricardo Santos — Comediante">
-    <div class="hero-artist-overlay">
-      <div class="hero-artist-label">O Artista da Noite</div>
-      <div class="hero-artist-name">JOEL RICARDO SANTOS</div>
-      <a class="hero-artist-ig" href="https://www.instagram.com/joelricardosantos/" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-        @joelricardosantos
-      </a>
+    <div class="artist-card fadein">
+      <img class="artist-card-img" src="img/joel.jpeg" alt="Joel Ricardo Santos">
+      <div class="artist-card-info">
+        <div class="artist-card-label">O Artista da Noite</div>
+        <div class="artist-card-name">JOEL RICARDO SANTOS</div>
+        <a class="artist-card-ig" href="https://www.instagram.com/joelricardosantos/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          @joelricardosantos
+        </a>
+      </div>
+    </div>
+    <div class="ticket-3d fadein" style="animation-delay:.1s">
+      <div class="ticket-shadow"></div>
+      <div class="ticket-main">
+        <div class="t-head"><div class="org">Comissão de Festas Vila Seca</div><h3>STAND-UP NIGHT</h3></div>
+        <div class="t-tear"><div class="t-dot"></div><div class="t-dot"></div></div>
+        <div class="t-body">
+          <div class="t-row"><span class="lbl">Data</span><span class="val">Sáb, 14 Jun 2025</span></div>
+          <div class="t-row"><span class="lbl">Hora</span><span class="val">21h30</span></div>
+          <div class="t-row"><span class="lbl">Local</span><span class="val">Salão Paroquial</span></div>
+          <div class="t-row"><span class="lbl">Aldeia</span><span class="val">Vila Seca</span></div>
+          <div class="t-price-wrap"><div class="t-price">9€</div><div class="t-price-lbl">por bilhete · lugares limitados</div></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
