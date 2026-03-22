@@ -18,14 +18,26 @@
 .hero-title .l3 { font-size:clamp(2.2rem,4vw,4rem); color:#888; display:block; }
 .hero-body { color:#999; font-size:.9rem; line-height:1.7; max-width:420px; margin-bottom:2.5rem; }
 .hero-body strong { color:white; }
-.hero-meta { display:grid; grid-template-columns:1fr 1fr; gap:1rem 2rem; margin-bottom:3rem; padding:1.5rem; border:1px solid #222; background:rgba(255,255,255,.03); }
+.hero-meta { display:grid; grid-template-columns:1fr 1fr; gap:1rem 2rem; margin-bottom:1.5rem; padding:1.5rem; border:1px solid #222; background:rgba(255,255,255,.03); }
 .meta-label { font-family:'Space Mono',monospace; font-size:.52rem; letter-spacing:3px; text-transform:uppercase; color:#555; margin-bottom:.2rem; }
 .meta-val { color:white; font-weight:700; font-size:1rem; }
 .hero-ctas { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
 .hero-right { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem; padding:3rem 4rem 3rem 2rem; position:relative; z-index:1; }
+
+/* Countdown */
+.countdown { display:flex; gap:1rem; margin-bottom:2rem; }
+.countdown-unit { text-align:center; }
+.countdown-num { font-family:'Bebas Neue',cursive; font-size:2.4rem; color:var(--yellow); line-height:1; display:block; min-width:2.5rem; }
+.countdown-lbl { font-family:'Space Mono',monospace; font-size:.45rem; letter-spacing:2px; text-transform:uppercase; color:#555; }
+.countdown-sep { font-family:'Bebas Neue',cursive; font-size:2.2rem; color:#333; align-self:flex-start; padding-top:.1rem; }
+
+/* WhatsApp btn */
+.btn-whatsapp { display:inline-flex; align-items:center; gap:.5rem; background:#25d366; color:white; text-decoration:none; padding:.7rem 1.2rem; border-radius:4px; font-family:'Space Mono',monospace; font-size:.68rem; font-weight:700; letter-spacing:.5px; transition:opacity .2s; }
+.btn-whatsapp:hover { opacity:.85; }
+.btn-whatsapp svg { width:15px; height:15px; fill:white; flex-shrink:0; }
+
 /* Artist mini card */
-.artist-card { display:flex; align-items:center; gap:1rem; background:rgba(255,255,255,.04); border:1px solid #222; border-left:3px solid var(--yellow); padding:.9rem 1.2rem; width:300px; }
-.artist-card { cursor:pointer; }
+.artist-card { display:flex; align-items:center; gap:1rem; background:rgba(255,255,255,.04); border:1px solid #222; border-left:3px solid var(--yellow); padding:.9rem 1.2rem; width:300px; cursor:pointer; }
 .artist-card-img { width:80px; height:80px; border-radius:50%; object-fit:cover; object-position:center top; flex-shrink:0; filter:grayscale(10%); }
 .artist-card-info { min-width:0; }
 .artist-card-label { font-family:'Space Mono',monospace; font-size:.48rem; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); margin-bottom:.2rem; }
@@ -33,6 +45,7 @@
 .artist-card-ig { display:inline-flex; align-items:center; gap:.35rem; color:#777; text-decoration:none; font-family:'Space Mono',monospace; font-size:.55rem; letter-spacing:.5px; transition:color .2s; }
 .artist-card-ig:hover { color:var(--yellow); }
 .artist-card-ig svg { width:11px; height:11px; fill:currentColor; flex-shrink:0; }
+
 /* Ticket */
 .ticket-3d { position:relative; width:300px; }
 .ticket-shadow { position:absolute; inset:0; background:rgba(240,192,48,.15); transform:rotate(5deg) translate(12px,12px); border-radius:4px; }
@@ -51,6 +64,8 @@
 .t-price-wrap { text-align:center; padding:1rem 0 .5rem; border-top:2px solid var(--border); margin-top:.5rem; }
 .t-price { font-family:'Bebas Neue',cursive; font-size:3.5rem; color:var(--red); line-height:1; }
 .t-price-lbl { font-family:'Space Mono',monospace; font-size:.58rem; color:var(--muted); letter-spacing:2px; }
+
+/* How-it-works */
 .info-section { background:white; padding:5rem; }
 .info-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:3rem; }
 .info-card { border-top:3px solid var(--ink); padding-top:1.5rem; }
@@ -73,6 +88,42 @@
 .artist-ig:hover { opacity:.85; }
 .artist-ig svg { width:16px; height:16px; fill:white; flex-shrink:0; }
 
+/* Practical info */
+.practical-section { background:#f8f7f4; padding:5rem; border-top:1px solid #eee; }
+.practical-inner { max-width:1100px; margin:0 auto; }
+.section-heading { font-family:'Bebas Neue',cursive; font-size:clamp(2rem,4vw,3rem); letter-spacing:1px; margin-bottom:.5rem; }
+.section-sub { color:var(--muted); font-size:.88rem; margin-bottom:3rem; }
+.practical-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
+.practical-card { background:white; border:1px solid #e8e4dc; padding:1.5rem; border-radius:2px; }
+.practical-icon { font-size:1.8rem; margin-bottom:.8rem; }
+.practical-title { font-family:'Bebas Neue',cursive; font-size:1.1rem; letter-spacing:.5px; margin-bottom:.4rem; }
+.practical-text { color:var(--muted); font-size:.82rem; line-height:1.6; }
+
+/* Map section */
+.map-section { padding:5rem; background:white; border-top:1px solid #eee; }
+.map-inner { max-width:1100px; margin:0 auto; }
+.map-wrap { display:grid; grid-template-columns:1fr 360px; gap:3rem; align-items:start; margin-top:2.5rem; }
+.map-iframe { width:100%; height:380px; border:0; border-radius:2px; display:block; }
+.map-info { display:flex; flex-direction:column; gap:1.2rem; }
+.map-info-row { display:flex; gap:1rem; align-items:flex-start; }
+.map-info-icon { font-size:1.2rem; flex-shrink:0; margin-top:.1rem; }
+.map-info-text { font-size:.88rem; line-height:1.6; color:var(--muted); }
+.map-info-text strong { color:var(--ink); display:block; margin-bottom:.15rem; font-size:.9rem; }
+.btn-directions { display:inline-flex; align-items:center; gap:.5rem; margin-top:.5rem; background:var(--ink); color:white; text-decoration:none; padding:.75rem 1.3rem; border-radius:4px; font-family:'Space Mono',monospace; font-size:.68rem; font-weight:700; letter-spacing:.5px; transition:background .2s; }
+.btn-directions:hover { background:#222; }
+
+/* FAQ */
+.faq-section { background:#f8f7f4; padding:5rem; border-top:1px solid #eee; }
+.faq-inner { max-width:800px; margin:0 auto; }
+.faq-list { margin-top:2.5rem; display:flex; flex-direction:column; gap:.6rem; }
+.faq-item { background:white; border:1px solid #e8e4dc; border-radius:2px; overflow:hidden; }
+.faq-q { width:100%; background:none; border:none; text-align:left; padding:1.2rem 1.5rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; font-family:inherit; font-size:.92rem; font-weight:700; color:var(--ink); }
+.faq-q:hover { background:#fafaf8; }
+.faq-arrow { font-size:1rem; transition:transform .25s; flex-shrink:0; color:#999; }
+.faq-item.open .faq-arrow { transform:rotate(180deg); }
+.faq-a { display:none; padding:0 1.5rem 1.2rem; color:var(--muted); font-size:.88rem; line-height:1.7; }
+.faq-item.open .faq-a { display:block; }
+
 @media(max-width:900px) {
   .hero { grid-template-columns:1fr; }
   .hero-right { display:none; }
@@ -82,6 +133,17 @@
   .artist-section { padding:3rem 1.5rem; }
   .artist-inner { grid-template-columns:1fr; gap:2.5rem; }
   .artist-img-wrap { max-width:280px; margin:0 auto; }
+  .practical-section { padding:3rem 1.5rem; }
+  .practical-grid { grid-template-columns:1fr 1fr; }
+  .map-section { padding:3rem 1.5rem; }
+  .map-wrap { grid-template-columns:1fr; }
+  .map-iframe { height:280px; }
+  .faq-section { padding:3rem 1.5rem; }
+}
+@media(max-width:500px) {
+  .practical-grid { grid-template-columns:1fr; }
+  .countdown { gap:.6rem; }
+  .countdown-num { font-size:1.8rem; }
 }
 </style>
 </head>
@@ -119,12 +181,25 @@
     <div class="hero-meta">
       <div><div class="meta-label">Data</div><div class="meta-val">Sábado, 14 Jun 2025</div></div>
       <div><div class="meta-label">Hora</div><div class="meta-val">21h30</div></div>
-      <div><div class="meta-label">Local</div><div class="meta-val">Salão Paroquial</div></div>
+      <div><div class="meta-label">Local</div><div class="meta-val">Multiusos de Louredo</div></div>
       <div><div class="meta-label">Preço</div><div class="meta-val" style="color:var(--yellow)">9 €</div></div>
+    </div>
+    <div class="countdown" id="countdown">
+      <div class="countdown-unit"><span class="countdown-num" id="cd-days">--</span><span class="countdown-lbl">Dias</span></div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit"><span class="countdown-num" id="cd-hours">--</span><span class="countdown-lbl">Horas</span></div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit"><span class="countdown-num" id="cd-mins">--</span><span class="countdown-lbl">Min</span></div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit"><span class="countdown-num" id="cd-secs">--</span><span class="countdown-lbl">Seg</span></div>
     </div>
     <div class="hero-ctas">
       <a class="btn-primary" href="comprar.html">Comprar Bilhete →</a>
       <a class="btn-ghost" href="#how">Como funciona</a>
+      <a class="btn-whatsapp" href="https://wa.me/?text=Vem%20connosco%20%C3%A0%20Noite%20de%20Stand-Up%20Comedy%20em%20Vila%20Seca!%20%F0%9F%8E%A4%20S%C3%A1b%2014%20Jun%2C%2021h30%2C%20Multiusos%20de%20Louredo%20%E2%80%94%20bilhetes%20a%209%E2%82%AC%3A%20https%3A%2F%2Fgoncalo77.github.io%2Fstandup-vs%2F" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Partilhar
+      </a>
     </div>
   </div>
   <div class="hero-right">
@@ -147,8 +222,8 @@
         <div class="t-body">
           <div class="t-row"><span class="lbl">Data</span><span class="val">Sáb, 14 Jun 2025</span></div>
           <div class="t-row"><span class="lbl">Hora</span><span class="val">21h30</span></div>
-          <div class="t-row"><span class="lbl">Local</span><span class="val">Salão Paroquial</span></div>
-          <div class="t-row"><span class="lbl">Aldeia</span><span class="val">Vila Seca</span></div>
+          <div class="t-row"><span class="lbl">Local</span><span class="val">Multiusos de Louredo</span></div>
+          <div class="t-row"><span class="lbl">Concelho</span><span class="val">Sta. Maria da Feira</span></div>
           <div class="t-price-wrap"><div class="t-price">9€</div><div class="t-price-lbl">por bilhete · lugares limitados</div></div>
         </div>
       </div>
@@ -178,6 +253,68 @@
   </div>
 </section>
 
+<section class="practical-section">
+  <div class="practical-inner">
+    <div class="section-heading">Informações Práticas</div>
+    <div class="section-sub">Tudo o que precisas de saber para a noite</div>
+    <div class="practical-grid">
+      <div class="practical-card fadein">
+        <div class="practical-icon">🚪</div>
+        <div class="practical-title">Abertura de Portas</div>
+        <p class="practical-text">As portas abrem às <strong>21h00</strong>. O espetáculo começa às 21h30. Chega com antecedência!</p>
+      </div>
+      <div class="practical-card fadein" style="animation-delay:.05s">
+        <div class="practical-icon">🍺</div>
+        <div class="practical-title">Bar</div>
+        <p class="practical-text">O evento conta com <strong>bar</strong> disponível antes e durante o espetáculo.</p>
+      </div>
+      <div class="practical-card fadein" style="animation-delay:.1s">
+        <div class="practical-icon">🚗</div>
+        <div class="practical-title">Estacionamento</div>
+        <p class="practical-text"><strong>Estacionamento gratuito</strong> disponível junto ao Multiusos de Louredo.</p>
+      </div>
+      <div class="practical-card fadein" style="animation-delay:.15s">
+        <div class="practical-icon">🎫</div>
+        <div class="practical-title">Bilhete Digital</div>
+        <p class="practical-text">O bilhete é enviado por <strong>email</strong>. Basta mostrar o QR Code na entrada, no telemóvel ou impresso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="map-section">
+  <div class="map-inner">
+    <div class="section-heading">Como Chegar</div>
+    <div class="section-sub">Multiusos de Louredo, Santa Maria da Feira</div>
+    <div class="map-wrap">
+      <iframe
+        class="map-iframe"
+        src="https://maps.google.com/maps?q=Multiusos+de+Louredo+Santa+Maria+da+Feira+Portugal&output=embed"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+      <div class="map-info">
+        <div class="map-info-row">
+          <div class="map-info-icon">📍</div>
+          <div class="map-info-text"><strong>Morada</strong>Multiusos de Louredo<br>Santa Maria da Feira, Aveiro</div>
+        </div>
+        <div class="map-info-row">
+          <div class="map-info-icon">🚆</div>
+          <div class="map-info-text"><strong>Transportes</strong>Acessível de carro pela A29 / A1. Estacionamento gratuito no local.</div>
+        </div>
+        <div class="map-info-row">
+          <div class="map-info-icon">📅</div>
+          <div class="map-info-text"><strong>Data e Hora</strong>Sábado, 14 de Junho de 2025<br>Portas: 21h00 · Início: 21h30</div>
+        </div>
+        <a class="btn-directions" href="https://www.google.com/maps/search/Multiusos+de+Louredo+Santa+Maria+da+Feira" target="_blank" rel="noopener">
+          Ver no Google Maps →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="info-section" id="how">
   <div class="info-grid">
     <div class="info-card fadein">
@@ -198,6 +335,39 @@
   </div>
 </div>
 
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="section-heading">Perguntas Frequentes</div>
+    <div class="section-sub">Tens dúvidas? Aqui estão as respostas mais comuns.</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">E se não receber o email com o bilhete? <span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Verifica a pasta de spam. Se não estiver lá, entra em contacto connosco via Instagram ou WhatsApp com o nome e email que usaste na compra e resolvemos de imediato.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Posso transferir o meu bilhete para outra pessoa? <span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Sim! O bilhete é válido para quem o apresentar na entrada. Basta enviar o link do bilhete ou o QR Code para a pessoa que vai em teu lugar.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Quanto tempo tenho para pagar via MBWay? <span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Deves efetuar o pagamento MBWay logo após a compra. Após a confirmação do pagamento, a Comissão confirma o bilhete manualmente, normalmente em menos de 24h.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">O evento pode ser cancelado? <span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Em caso de cancelamento do evento, todos os participantes serão notificados e receberão o reembolso integral do valor pago.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Há limite de idade para entrar? <span class="faq-arrow">▾</span></button>
+        <div class="faq-a">O espetáculo é recomendado para maiores de 16 anos. Menores deverão ser acompanhados por um adulto responsável.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Posso comprar bilhetes na porta? <span class="faq-arrow">▾</span></button>
+        <div class="faq-a">Apenas se ainda houver lugares disponíveis. Os bilhetes online têm prioridade e o espaço tem lotação limitada — recomendamos que compres antecipadamente para garantir o teu lugar.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="toast" id="toast"></div>
 <script src="config.js"></script>
 <script src="app.js"></script>
@@ -214,6 +384,37 @@
     setBar('home-bar', pct);
   } catch(e) { console.warn('Stock load failed', e); }
 })();
+
+// Countdown
+(function(){
+  var target = new Date('2025-06-14T21:30:00').getTime();
+  function tick(){
+    var now = Date.now();
+    var diff = target - now;
+    if(diff <= 0){
+      document.getElementById('countdown').innerHTML = '<span style="font-family:\'Bebas Neue\',cursive;font-size:1.8rem;color:var(--yellow);letter-spacing:1px">A noite chegou! 🎤</span>';
+      return;
+    }
+    var d = Math.floor(diff/86400000);
+    var h = Math.floor((diff%86400000)/3600000);
+    var m = Math.floor((diff%3600000)/60000);
+    var s = Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+// FAQ accordion
+function toggleFaq(btn){
+  var item = btn.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(el){ el.classList.remove('open'); });
+  if(!isOpen) item.classList.add('open');
+}
 </script>
 </body>
 </html>
