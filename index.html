@@ -25,7 +25,8 @@
 .hero-right { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem; padding:3rem 4rem 3rem 2rem; position:relative; z-index:1; }
 /* Artist mini card */
 .artist-card { display:flex; align-items:center; gap:1rem; background:rgba(255,255,255,.04); border:1px solid #222; border-left:3px solid var(--yellow); padding:.9rem 1.2rem; width:300px; }
-.artist-card-img { width:64px; height:64px; border-radius:50%; object-fit:cover; object-position:center top; flex-shrink:0; filter:grayscale(10%); }
+.artist-card { cursor:pointer; }
+.artist-card-img { width:80px; height:80px; border-radius:50%; object-fit:cover; object-position:center top; flex-shrink:0; filter:grayscale(10%); }
 .artist-card-info { min-width:0; }
 .artist-card-label { font-family:'Space Mono',monospace; font-size:.48rem; letter-spacing:3px; text-transform:uppercase; color:var(--yellow); margin-bottom:.2rem; }
 .artist-card-name { font-family:'Bebas Neue',cursive; font-size:1.15rem; color:white; line-height:1; margin-bottom:.35rem; letter-spacing:.5px; }
@@ -127,8 +128,8 @@
     </div>
   </div>
   <div class="hero-right">
-    <div class="artist-card fadein">
-      <img class="artist-card-img" src="img/joel.jpeg" alt="Joel Ricardo Santos">
+    <div class="artist-card fadein" onclick="document.querySelector('.artist-section').scrollIntoView({behavior:'smooth'})">
+      <img class="artist-card-img" src="img/joel2.jpeg" alt="Joel Ricardo Santos">
       <div class="artist-card-info">
         <div class="artist-card-label">O Artista da Noite</div>
         <div class="artist-card-name">JOEL RICARDO SANTOS</div>
