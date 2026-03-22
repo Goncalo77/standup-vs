@@ -107,6 +107,28 @@ function restoreAdminSession() {
   return false;
 }
 
+function getAdminEmail() {
+  if (!_adminToken) return null;
+  try {
+    return JSON.parse(atob(_adminToken.split('.')[1])).email || null;
+  } catch(e) { return null; }
+}
+
+async function manageAdmins(action, params) {
+  var res = await fetch(SUPABASE_URL + '/functions/v1/manage-admins', {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + _adminToken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(Object.assign({ action: action }, params || {}))
+  });
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Erro');
+  return data;
+}
+
 /* ============================================================
    QR CODE GENERATOR (inline, no external deps)
    ============================================================ */

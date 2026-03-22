@@ -73,6 +73,12 @@
 .reject-actions .btn-cancel:hover { background:var(--cream); }
 .reject-actions .btn-reject { background:var(--red); color:white; border-color:var(--red); }
 .reject-actions .btn-reject:hover { opacity:.85; }
+/* GESTÃO ADMINS */
+.admin-user-row { display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem; border-bottom:1px solid var(--border); font-size:.82rem; gap:.5rem; flex-wrap:wrap; }
+.admin-user-row:last-child { border-bottom:none; }
+.admin-user-email { font-family:'Space Mono',monospace; font-size:.7rem; }
+.admin-user-meta  { font-family:'Space Mono',monospace; font-size:.58rem; color:var(--muted); }
+.super-badge { background:var(--yellow); color:var(--ink); font-family:'Space Mono',monospace; font-size:.52rem; padding:.15rem .5rem; letter-spacing:1px; }
 @media(max-width:900px) {
   .stats-row   { grid-template-columns:1fr 1fr; }
   .admin-main  { grid-template-columns:1fr; }
@@ -188,6 +194,18 @@
       </div>
     </div>
 
+    <!-- GESTÃO DE ADMINS (só visível para goncalo227788@gmail.com) -->
+    <div id="admins-section" style="display:none;margin-bottom:2rem">
+      <div class="section-label">👑 Gestão de Administradores</div>
+      <div class="acard" style="border-color:var(--yellow);border-width:2px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+          <h3 style="margin:0;color:var(--ink)">Utilizadores com acesso admin</h3>
+          <button class="abtn yellow-btn" onclick="openAddAdminModal()">+ Adicionar Admin</button>
+        </div>
+        <div id="admins-list"><div style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--muted);padding:1rem 0">A carregar...</div></div>
+      </div>
+    </div>
+
     <div class="stock-mgmt">
       <h3>📦 Gestão de Capacidade</h3>
       <div class="stock-stats">
@@ -228,6 +246,18 @@
       Total a cobrar: <strong id="p-total-lbl">9 €</strong>
     </div>
     <button class="submit-btn" id="btn-presencial" onclick="submitPresencial()">✓ Confirmar Venda Presencial</button>
+  </div>
+</div>
+
+<!-- MODAL ADICIONAR ADMIN -->
+<div class="modal-overlay" id="add-admin-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAddAdminModal()">✕</button>
+    <h3>Adicionar Administrador</h3>
+    <p class="sub">O novo utilizador poderá aceder ao painel admin com estas credenciais.</p>
+    <div class="field"><label>Email *</label><input type="email" id="na-email" placeholder="novo@email.com"></div>
+    <div class="field"><label>Palavra-passe *</label><input type="password" id="na-pass" placeholder="Mínimo 6 caracteres"></div>
+    <button class="submit-btn" id="btn-add-admin" onclick="submitAddAdmin()">✓ Criar Administrador</button>
   </div>
 </div>
 
@@ -280,6 +310,7 @@ function showDash(){
   document.getElementById('admin-dash').style.display = 'block';
   refreshAdmin();
   startAutoRefresh();
+  initAdminSection();
 }
 
 function doLogout(){
@@ -540,6 +571,75 @@ async function submitPresencial(){
     toast('⚠ Erro ao registar venda','err');
     console.error(e);
   } finally { btn.disabled=false; btn.textContent='✓ Confirmar Venda Presencial'; hideLoad(); }
+}
+
+/* ---- GESTÃO DE ADMINS ---- */
+var SUPER_ADMIN = 'goncalo227788@gmail.com';
+
+function initAdminSection(){
+  if(getAdminEmail() === SUPER_ADMIN){
+    document.getElementById('admins-section').style.display = 'block';
+    loadAdminUsers();
+  }
+}
+
+async function loadAdminUsers(){
+  var box = document.getElementById('admins-list');
+  try {
+    var data = await manageAdmins('list');
+    if(!data.users || !data.users.length){
+      box.innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:.72rem;color:var(--muted);padding:1rem 0">Nenhum utilizador encontrado</div>';
+      return;
+    }
+    box.innerHTML = data.users.map(function(u){
+      var isSuperAdmin = u.email === SUPER_ADMIN;
+      var lastLogin = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') : 'Nunca';
+      return '<div class="admin-user-row">'+
+        '<div>'+
+          '<div class="admin-user-email">'+u.email+(isSuperAdmin ? ' <span class="super-badge">SUPER ADMIN</span>' : '')+'</div>'+
+          '<div class="admin-user-meta">Último login: '+lastLogin+'</div>'+
+        '</div>'+
+        (!isSuperAdmin ? '<button class="abtn red" style="font-size:.7rem;padding:.3rem .7rem" onclick="removeAdmin(\''+u.id+'\',\''+u.email+'\')">Remover</button>' : '')+
+      '</div>';
+    }).join('');
+  } catch(e){
+    box.innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:.72rem;color:var(--red);padding:1rem 0">Erro ao carregar admins. Verifica se a Edge Function está deployada.</div>';
+  }
+}
+
+function openAddAdminModal(){ document.getElementById('add-admin-modal').classList.add('open'); }
+function closeAddAdminModal(){
+  document.getElementById('add-admin-modal').classList.remove('open');
+  document.getElementById('na-email').value = '';
+  document.getElementById('na-pass').value = '';
+}
+
+async function submitAddAdmin(){
+  var email = document.getElementById('na-email').value.trim();
+  var pass  = document.getElementById('na-pass').value;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('⚠ Email inválido','err'); return; }
+  if(pass.length < 6){ toast('⚠ Palavra-passe mínimo 6 caracteres','err'); return; }
+  var btn = document.getElementById('btn-add-admin');
+  btn.disabled = true; btn.textContent = 'A criar...';
+  try {
+    await manageAdmins('create', { email: email, password: pass });
+    closeAddAdminModal();
+    toast('✓ Administrador '+email+' criado!','ok');
+    loadAdminUsers();
+  } catch(e){
+    toast('⚠ '+e.message,'err');
+  } finally { btn.disabled = false; btn.textContent = '✓ Criar Administrador'; }
+}
+
+async function removeAdmin(userId, email){
+  if(!confirm('Remover acesso admin de '+email+'?')) return;
+  try {
+    await manageAdmins('delete', { userId: userId });
+    toast('✓ '+email+' removido','ok');
+    loadAdminUsers();
+  } catch(e){
+    toast('⚠ '+e.message,'err');
+  }
 }
 
 /* ---- VERIFICAR BILHETE ---- */
