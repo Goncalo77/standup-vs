@@ -16,7 +16,6 @@ serve(async (req: Request) => {
   }
 
   try {
-    // Verificar JWT do utilizador que chama a função
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Não autorizado" }), {
@@ -24,28 +23,26 @@ serve(async (req: Request) => {
       });
     }
 
-    const supabaseClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
-    });
+    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    // Verificar JWT usando a service role key (não precisa da anon key)
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+
     if (authError || !user) {
       return new Response(JSON.stringify({ error: "Não autorizado" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Apenas o super-admin pode gerir utilizadores
     if (user.email !== SUPER_ADMIN_EMAIL) {
       return new Response(JSON.stringify({ error: "Acesso negado" }), {
         status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const { action, email, password, userId } = await req.json();
 
-    // LISTAR admins
     if (action === "list") {
       const { data, error } = await supabaseAdmin.auth.admin.listUsers();
       if (error) throw error;
@@ -60,7 +57,6 @@ serve(async (req: Request) => {
       });
     }
 
-    // CRIAR admin
     if (action === "create") {
       if (!email || !password) {
         return new Response(JSON.stringify({ error: "Email e palavra-passe são obrigatórios" }), {
@@ -78,14 +74,12 @@ serve(async (req: Request) => {
       });
     }
 
-    // REMOVER admin
     if (action === "delete") {
       if (!userId) {
         return new Response(JSON.stringify({ error: "userId obrigatório" }), {
           status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      // Proteger o super-admin de ser apagado
       const { data: targetUser } = await supabaseAdmin.auth.admin.getUserById(userId);
       if (targetUser?.user?.email === SUPER_ADMIN_EMAIL) {
         return new Response(JSON.stringify({ error: "Não podes remover o super-admin" }), {
