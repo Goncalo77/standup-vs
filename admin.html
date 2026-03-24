@@ -403,20 +403,67 @@ function renderPendingTable(pend){
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;font-family:\'Space Mono\',monospace;font-size:.72rem;color:var(--muted)">Nenhum pagamento pendente 🎉</td></tr>';
     return;
   }
-  tbody.innerHTML = pend.map(function(t){
-    return '<tr class="pr">'+
-      '<td style="font-family:\'Space Mono\',monospace;font-size:.62rem;letter-spacing:1px">'+t.code+'</td>'+
-      '<td><strong>'+t.name+'</strong><br><span style="font-size:.72rem;color:var(--muted)">'+t.email+'</span></td>'+
-      '<td style="font-family:\'Space Mono\',monospace;font-size:.75rem">'+t.phone+'</td>'+
-      '<td style="text-align:center">'+t.qty+'</td>'+
-      '<td><strong>'+t.total+' €</strong></td>'+
-      '<td style="font-family:\'Space Mono\',monospace;font-size:.68rem">'+(t.request_date||'—')+'</td>'+
-      '<td><div style="display:flex;gap:.4rem">'+
-        '<button class="abtn green" onclick="confirmTicket(\''+t.code+'\')">✓ Confirmar</button>'+
-        '<button class="abtn red" onclick="rejectTicket(\''+t.code+'\',\''+t.name.replace(/'/g,"\\'")+'\','+t.qty+','+t.total+')">✗ Rejeitar</button>'+
-      '</div></td>'+
-    '</tr>';
-  }).join('');
+  tbody.innerHTML = pend.map(function(t){ return renderPendingRow(t, false); }).join('');
+}
+
+function renderPendingRow(t, editing){
+  var nameCell = editing
+    ? '<input id="edit-name-'+t.code+'" value="'+t.name.replace(/"/g,'&quot;')+'" style="width:100%;padding:.3rem .5rem;border:1.5px solid var(--ink);font-family:inherit;font-size:.82rem"><br><span style="font-size:.72rem;color:var(--muted)">'+t.email+'</span>'
+    : '<strong>'+t.name+'</strong><br><span style="font-size:.72rem;color:var(--muted)">'+t.email+'</span>';
+  var phoneCell = editing
+    ? '<input id="edit-phone-'+t.code+'" value="'+(t.phone||'')+'" style="width:100px;padding:.3rem .5rem;border:1.5px solid var(--ink);font-family:\'Space Mono\',monospace;font-size:.72rem">'
+    : '<span style="font-family:\'Space Mono\',monospace;font-size:.75rem">'+(t.phone||'—')+'</span>';
+  var actionBtns = editing
+    ? '<button class="abtn green" onclick="savePendingEdit(\''+t.code+'\')">💾 Guardar</button>'+
+      '<button class="abtn" onclick="cancelPendingEdit(\''+t.code+'\')">✕ Cancelar</button>'
+    : '<button class="abtn green" onclick="confirmTicket(\''+t.code+'\')">✓ Confirmar</button>'+
+      '<button class="abtn" style="background:var(--ink);color:white" onclick="startPendingEdit(\''+t.code+'\')">✎ Editar</button>'+
+      '<button class="abtn red" onclick="rejectTicket(\''+t.code+'\',\''+t.name.replace(/'/g,"\\'")+'\','+t.qty+','+t.total+')">✗ Rejeitar</button>';
+  return '<tr class="pr" id="pr-'+t.code+'">'+
+    '<td style="font-family:\'Space Mono\',monospace;font-size:.62rem;letter-spacing:1px">'+t.code+'</td>'+
+    '<td>'+nameCell+'</td>'+
+    '<td>'+phoneCell+'</td>'+
+    '<td style="text-align:center">'+t.qty+'</td>'+
+    '<td><strong>'+t.total+' €</strong></td>'+
+    '<td style="font-family:\'Space Mono\',monospace;font-size:.68rem">'+(t.request_date||'—')+'</td>'+
+    '<td><div style="display:flex;gap:.4rem;flex-wrap:wrap">'+actionBtns+'</div></td>'+
+  '</tr>';
+}
+
+function startPendingEdit(code){
+  var t = _pendingMap[code]; if(!t) return;
+  var tr = document.getElementById('pr-'+code); if(!tr) return;
+  tr.outerHTML = renderPendingRow(t, true);
+}
+
+function cancelPendingEdit(code){
+  var t = _pendingMap[code]; if(!t) return;
+  var tr = document.getElementById('pr-'+code); if(!tr) return;
+  tr.outerHTML = renderPendingRow(t, false);
+}
+
+async function savePendingEdit(code){
+  var nameEl  = document.getElementById('edit-name-'+code);
+  var phoneEl = document.getElementById('edit-phone-'+code);
+  var name  = nameEl  ? nameEl.value.trim()  : '';
+  var phone = phoneEl ? phoneEl.value.trim() : '';
+  if(!name){ toast('⚠ O nome não pode estar vazio','err'); return; }
+  var tr = document.getElementById('pr-'+code);
+  var btns = tr ? tr.querySelectorAll('button') : [];
+  btns.forEach(function(b){ b.disabled=true; });
+  try {
+    await updateTicket(code, { name: name, phone: phone });
+    _pendingMap[code].name  = name;
+    _pendingMap[code].phone = phone;
+    var idx = _allTickets.findIndex(function(t){ return t.code===code; });
+    if(idx!==-1){ _allTickets[idx].name=name; _allTickets[idx].phone=phone; }
+    var tr2 = document.getElementById('pr-'+code);
+    if(tr2) tr2.outerHTML = renderPendingRow(_pendingMap[code], false);
+    toast('✓ Dados atualizados');
+  } catch(e) {
+    toast('⚠ Erro ao guardar: '+e.message,'err');
+    btns.forEach(function(b){ b.disabled=false; });
+  }
 }
 
 var _allTickets = [];
