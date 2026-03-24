@@ -255,7 +255,7 @@
     <h3>Venda Presencial</h3>
     <p class="sub">Pagamento recebido em mãos · Bilhete confirmado de imediato</p>
     <div class="field"><label>Nome *</label><input type="text" id="p-name" placeholder="Nome da pessoa"></div>
-    <div class="field"><label>Email *</label><input type="email" id="p-email" placeholder="Para enviar o link do bilhete"></div>
+    <div class="field"><label>Telemóvel</label><input type="tel" id="p-phone" placeholder="9XX XXX XXX" maxlength="9" oninput="this.value=this.value.replace(/\D/g,'').slice(0,9)"></div>
     <div class="field">
       <label>Nº de Bilhetes</label>
       <div class="qty-row">
@@ -623,15 +623,14 @@ function openPresencialModal(){ document.getElementById('presencial-modal').clas
 function closePresencialModal(){
   document.getElementById('presencial-modal').classList.remove('open');
   document.getElementById('p-name').value = '';
-  document.getElementById('p-email').value = '';
+  document.getElementById('p-phone').value = '';
   pQty=1; setEl('p-qty-num',1); setEl('p-total-lbl',CFG.price+' €');
 }
 
 async function submitPresencial(){
   var name  = document.getElementById('p-name').value.trim();
-  var email = document.getElementById('p-email').value.trim();
+  var phone = document.getElementById('p-phone').value.trim();
   if(!name){ toast('⚠ Introduz o nome','err'); return; }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('⚠ Email inválido','err'); return; }
   var btn = document.getElementById('btn-presencial');
   btn.disabled=true; btn.textContent='A registar...';
   showLoad('A registar venda presencial...');
@@ -640,23 +639,14 @@ async function submitPresencial(){
     var d = today();
     var totalVal = pQty * CFG.price;
     await insertPresencialTicket({
-      code:code, name:name, email:email,
+      code:code, name:name, phone:phone,
       qty:pQty, total:totalVal,
       request_date:d, confirmed_date:d
     });
     closePresencialModal();
     await refreshAdmin();
     toast('✓ Venda presencial! '+code+' · '+name,'ok');
-    // Open ticket in new tab
     window.open('bilhete.html?codigo='+code, '_blank');
-    // Enviar email em background
-    try {
-      await sendTicketEmail({ code:code, name:name, email:email, qty:pQty, total:totalVal });
-      toast('📧 Email enviado para '+email,'ok');
-    } catch(emailErr){
-      console.error('Email error:', emailErr);
-      toast('⚠ Venda registada, mas erro ao enviar email. Usa "Reenviar" na tabela.','warn');
-    }
   } catch(e){
     toast('⚠ Erro ao registar venda','err');
     console.error(e);
