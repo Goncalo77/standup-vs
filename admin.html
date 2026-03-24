@@ -79,6 +79,16 @@
 .admin-user-email { font-family:'Space Mono',monospace; font-size:.7rem; }
 .admin-user-meta  { font-family:'Space Mono',monospace; font-size:.58rem; color:var(--muted); }
 .super-badge { background:var(--yellow); color:var(--ink); font-family:'Space Mono',monospace; font-size:.52rem; padding:.15rem .5rem; letter-spacing:1px; }
+/* TOGGLE */
+.toggle-section { background:white; border:1.5px solid var(--border); padding:1.5rem 2rem; margin-top:1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+.toggle-label { font-family:'Space Mono',monospace; font-size:.68rem; letter-spacing:1px; text-transform:uppercase; }
+.toggle-label span { display:block; font-family:inherit; font-size:.58rem; color:var(--muted); margin-top:.2rem; letter-spacing:.5px; text-transform:none; }
+.ios-toggle { position:relative; width:50px; height:28px; flex-shrink:0; }
+.ios-toggle input { display:none; }
+.ios-slider { position:absolute; inset:0; background:#ccc; border-radius:14px; cursor:pointer; transition:.3s; }
+.ios-slider:before { content:''; position:absolute; width:22px; height:22px; left:3px; top:3px; background:white; border-radius:50%; transition:.3s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.ios-toggle input:checked + .ios-slider { background:#34c759; }
+.ios-toggle input:checked + .ios-slider:before { transform:translateX(22px); }
 @media(max-width:900px) {
   .stats-row   { grid-template-columns:1fr 1fr; }
   .admin-main  { grid-template-columns:1fr; }
@@ -226,6 +236,18 @@
   </div>
 </div>
 
+<!-- TOGGLE VALIDAÇÃO -->
+<div class="toggle-section">
+  <div class="toggle-label">
+    🔒 Validação só no dia do evento
+    <span>Quando ativo, só é possível validar bilhetes no dia 22 Mai 2026</span>
+  </div>
+  <label class="ios-toggle">
+    <input type="checkbox" id="toggle-day-only" onchange="setDayOnlyMode(this.checked)">
+    <span class="ios-slider"></span>
+  </label>
+</div>
+
 <!-- MODAL VENDA PRESENCIAL -->
 <div class="modal-overlay" id="presencial-modal">
   <div class="modal">
@@ -368,6 +390,7 @@ async function refreshAdmin(silent){
 
     renderPendingTable(pend);
     renderAllTable(tickets);
+    loadDayOnlyToggle();
   } catch(e){
     if(!silent) toast('⚠ Erro ao carregar dados','err');
     console.error(e);
@@ -560,6 +583,23 @@ async function confirmReject(){
   } finally {
     btn.disabled = false; btn.textContent = 'Rejeitar Pedido';
     hideLoad();
+  }
+}
+
+async function loadDayOnlyToggle(){
+  var val = await getConfigValue('validation_day_only', 'false');
+  var el = document.getElementById('toggle-day-only');
+  if(el) el.checked = (val === 'true');
+}
+
+async function setDayOnlyMode(enabled){
+  try {
+    await upsertConfigValue('validation_day_only', enabled ? 'true' : 'false');
+    toast(enabled ? '🔒 Validação restrita ao dia do evento' : '🔓 Validação aberta (modo teste)');
+  } catch(e) {
+    toast('⚠ Erro ao guardar configuração','err');
+    var el = document.getElementById('toggle-day-only');
+    if(el) el.checked = !enabled;
   }
 }
 

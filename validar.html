@@ -184,6 +184,18 @@ async function validateCode(raw){
   var fb = document.getElementById('scan-fb');
   fb.className = 'scan-fb'; fb.style.display = 'flex';
   setEl('sf-icon','⌛'); setEl('sf-name','A verificar...'); setEl('sf-qty',''); setEl('sf-detail','');
+  var dayOnly = await getConfigValue('validation_day_only', 'false');
+  if(dayOnly === 'true'){
+    var today = new Date();
+    var isEventDay = today.getFullYear()===2026 && today.getMonth()===4 && today.getDate()===22;
+    if(!isEventDay){
+      fb.classList.add('fail');
+      setEl('sf-icon','🔒'); setEl('sf-name','Validação bloqueada');
+      setEl('sf-qty',''); setEl('sf-detail','A validação só está disponível no dia do evento (22 Mai 2026)');
+      toast('Validação só disponível no dia do evento','err');
+      return;
+    }
+  }
   try {
     var t = await getTicketByCode(code);
     if(!t){

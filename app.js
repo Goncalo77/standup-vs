@@ -42,6 +42,18 @@ async function getTickets()          { return await sbFetch('tickets?order=reque
 async function updateTicket(code, d) { return await sbFetch('tickets?code=eq.'+code, { method:'PATCH', body:JSON.stringify(d) }, true); }
 async function deleteTicket(code)    { return await sbFetch('tickets?code=eq.'+code, { method:'DELETE' }, true); }
 async function setCapacity(n)        { return await sbFetch('config?key=eq.capacity', { method:'PATCH', body:JSON.stringify({value:String(n)}) }, true); }
+async function getConfigValue(key, def) {
+  try { var r = await sbFetch('config?key=eq.'+key+'&select=value'); return r && r.length ? r[0].value : def; }
+  catch(e) { return def; }
+}
+async function upsertConfigValue(key, value) {
+  var res = await fetch(SUPABASE_URL+'/rest/v1/config', {
+    method: 'POST',
+    headers: Object.assign({}, _sbHeaders(true), {'Prefer': 'resolution=merge-duplicates'}),
+    body: JSON.stringify({key: key, value: String(value)})
+  });
+  if(!res.ok){ var e = await res.text(); throw new Error(e); }
+}
 
 async function insertPresencialTicket(t) {
   return await sbFetch('tickets', {
