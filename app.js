@@ -33,19 +33,16 @@ async function sbRpc(fnName, params) {
   return text ? JSON.parse(text) : null;
 }
 
-/* -- Operações públicas (anon) — via RPC (seguro, sem expor dados) -- */
 async function getTicketCounts()     { return await sbRpc('get_ticket_counts'); }
 async function getTicketByCode(code) { var r = await sbRpc('get_ticket_by_code', { p_code: code }); return r && r[0]; }
 async function insertTicket(t)       { return await sbRpc('submit_ticket', { p_name: t.name, p_email: t.email, p_phone: t.phone, p_qty: t.qty }); }
 async function getCapacity()         { var r = await sbFetch('config?key=eq.capacity&select=value'); return r && r.length ? parseInt(r[0].value) : 80; }
 
-/* -- Operações admin (authenticated) -- */
 async function getTickets()          { return await sbFetch('tickets?order=request_date.desc', null, true); }
 async function updateTicket(code, d) { return await sbFetch('tickets?code=eq.'+code, { method:'PATCH', body:JSON.stringify(d) }, true); }
 async function deleteTicket(code)    { return await sbFetch('tickets?code=eq.'+code, { method:'DELETE' }, true); }
 async function setCapacity(n)        { return await sbFetch('config?key=eq.capacity', { method:'PATCH', body:JSON.stringify({value:String(n)}) }, true); }
 
-/* -- Venda presencial (admin, INSERT direto com auth) -- */
 async function insertPresencialTicket(t) {
   return await sbFetch('tickets', {
     method: 'POST',
@@ -58,7 +55,6 @@ async function insertPresencialTicket(t) {
   }, true);
 }
 
-/* -- Enviar email com bilhete via Edge Function -- */
 async function sendTicketEmail(ticket) {
   var res = await fetch(SUPABASE_URL + '/functions/v1/send-ticket-email', {
     method: 'POST',
@@ -82,7 +78,6 @@ async function sendTicketEmail(ticket) {
   return await res.json();
 }
 
-/* ---- ADMIN AUTH (Supabase Auth) ---- */
 async function loginAdmin(email, password) {
   var res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
     method: 'POST',
@@ -195,7 +190,6 @@ function toast(msg, type) {
 
 /* ============================================================
    RATE LIMITING (client-side)
-   Bloqueia se o mesmo browser fizer demasiados pedidos
    ============================================================ */
 var RL = {
   check: function(key, max, windowMs) {
