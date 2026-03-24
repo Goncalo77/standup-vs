@@ -411,7 +411,7 @@ function renderPendingRow(t, editing){
     ? '<input id="edit-name-'+t.code+'" value="'+t.name.replace(/"/g,'&quot;')+'" style="width:100%;padding:.3rem .5rem;border:1.5px solid var(--ink);font-family:inherit;font-size:.82rem"><br><span style="font-size:.72rem;color:var(--muted)">'+t.email+'</span>'
     : '<strong>'+t.name+'</strong><br><span style="font-size:.72rem;color:var(--muted)">'+t.email+'</span>';
   var phoneCell = editing
-    ? '<input id="edit-phone-'+t.code+'" value="'+(t.phone||'')+'" style="width:100px;padding:.3rem .5rem;border:1.5px solid var(--ink);font-family:\'Space Mono\',monospace;font-size:.72rem">'
+    ? '<input id="edit-phone-'+t.code+'" value="'+(t.phone||'')+'" maxlength="9" style="width:100px;padding:.3rem .5rem;border:1.5px solid var(--ink);font-family:\'Space Mono\',monospace;font-size:.72rem" oninput="this.value=this.value.replace(/\\D/g,\'\').slice(0,9)">'
     : '<span style="font-family:\'Space Mono\',monospace;font-size:.75rem">'+(t.phone||'—')+'</span>';
   var actionBtns = editing
     ? '<button class="abtn green" onclick="savePendingEdit(\''+t.code+'\')">💾 Guardar</button>'+
