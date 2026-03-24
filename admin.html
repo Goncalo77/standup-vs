@@ -271,6 +271,25 @@
   </div>
 </div>
 
+<!-- MODAL CONFIRMAÇÃO VENDA PRESENCIAL -->
+<div class="modal-overlay" id="presencial-ok-modal">
+  <div class="modal" style="text-align:center">
+    <div style="width:70px;height:70px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.5rem">✓</div>
+    <h3 style="color:var(--green)">Venda Registada!</h3>
+    <p class="sub">Bilhete confirmado e guardado no sistema.</p>
+    <div class="reject-info" style="text-align:left">
+      <div class="ri-row"><span class="ri-lbl">Código</span><strong id="pok-code">—</strong></div>
+      <div class="ri-row"><span class="ri-lbl">Nome</span><strong id="pok-name">—</strong></div>
+      <div class="ri-row"><span class="ri-lbl">Bilhetes</span><span id="pok-qty">—</span></div>
+      <div class="ri-row"><span class="ri-lbl">Total</span><span id="pok-total">—</span></div>
+    </div>
+    <div style="background:#e8f5e9;border:1.5px solid var(--green);padding:1rem;margin:1.5rem 0;font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green)">
+      ✓ Pagamento recebido
+    </div>
+    <button class="submit-btn" onclick="document.getElementById('presencial-ok-modal').classList.remove('open')" style="background:var(--green)">Fechar</button>
+  </div>
+</div>
+
 <!-- MODAL ADICIONAR ADMIN -->
 <div class="modal-overlay" id="add-admin-modal">
   <div class="modal">
@@ -645,8 +664,12 @@ async function submitPresencial(){
     });
     closePresencialModal();
     await refreshAdmin();
+    setEl('pok-code', code);
+    setEl('pok-name', name);
+    setEl('pok-qty', pQty+' bilhete'+(pQty>1?'s':''));
+    setEl('pok-total', totalVal+' €');
+    document.getElementById('presencial-ok-modal').classList.add('open');
     toast('✓ Venda presencial! '+code+' · '+name,'ok');
-    window.open('bilhete.html?codigo='+code, '_blank');
   } catch(e){
     toast('⚠ Erro ao registar venda','err');
     console.error(e);
