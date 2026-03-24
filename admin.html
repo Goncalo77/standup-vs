@@ -170,7 +170,7 @@
       <div class="acard">
         <h3>🎟️ Todos os Bilhetes</h3>
         <div class="filter-bar">
-          <input type="text" id="f-search" placeholder="Pesquisar nome ou código..." oninput="applyFilters()">
+          <input type="text" id="f-search" placeholder="Pesquisar nome, código ou telemóvel..." oninput="applyFilters()">
           <select id="f-status" onchange="applyFilters()">
             <option value="">Todos os estados</option>
             <option value="pending">Pendente</option>
@@ -431,7 +431,7 @@ function applyFilters(){
   var status = document.getElementById('f-status').value;
   var canal  = document.getElementById('f-canal').value;
   var filtered = _allTickets.filter(function(t){
-    if(search && t.name.toLowerCase().indexOf(search)===-1 && t.code.toLowerCase().indexOf(search)===-1) return false;
+    if(search && t.name.toLowerCase().indexOf(search)===-1 && t.code.toLowerCase().indexOf(search)===-1 && !(t.phone && t.phone.replace(/\s/g,'').indexOf(search.replace(/\s/g,''))!==-1)) return false;
     if(status && t.status!==status) return false;
     if(canal && t.source!==canal) return false;
     return true;
