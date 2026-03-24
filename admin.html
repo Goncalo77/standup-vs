@@ -519,6 +519,8 @@ function applyFilters(){
     var canResend = (t.status==='valid' || t.status==='presencial');
     var actionCol = canResend
       ? '<button class="abtn" style="font-size:.68rem;padding:.3rem .6rem" onclick="resendEmail(\''+t.code+'\')">📧 Reenviar</button>'
+      : t.status==='used'
+      ? '<button class="abtn" style="font-size:.68rem;padding:.3rem .6rem;background:var(--orange);color:white" onclick="revertUsed(\''+t.code+'\')">↩ Retroceder</button>'
       : '';
     return '<tr class="'+(t.status==='pending'?'pr':'')+'">'+
       '<td style="font-family:\'Space Mono\',monospace;font-size:.62rem;letter-spacing:1px">'+t.code+'</td>'+
@@ -769,6 +771,20 @@ function verifyLookup(){
         ((t.status==='valid'||t.status==='presencial') ? '<button class="abtn" style="font-size:.75rem" onclick="resendEmail(\''+t.code+'\')">📧 Reenviar Email</button>' : '')+
       '</div>'+
     '</div>';
+}
+
+/* ---- RETROCEDER BILHETE USADO ---- */
+async function revertUsed(code){
+  if(!confirm('Retroceder bilhete '+code+' para "Confirmado"?')) return;
+  try {
+    await updateTicket(code, {status:'valid'});
+    var t = _allTickets.find(function(tk){ return tk.code===code; });
+    if(t) t.status = 'valid';
+    applyFilters();
+    toast('↩ Bilhete revertido para Confirmado');
+  } catch(e) {
+    toast('⚠ Erro ao retroceder bilhete','err');
+  }
 }
 
 /* ---- REENVIAR EMAIL ---- */
