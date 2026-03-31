@@ -235,11 +235,18 @@ function goStep1(){
 }
 
 async function submitPending(){
-  // Rate limiting client-side (complementar ao server-side)
-  if(!RL.check('buy', 3, 3600000)) return;
   var name  = document.getElementById('f-name').value.trim();
   var email = document.getElementById('f-email').value.trim();
   var phone = document.getElementById('f-phone').value.trim();
+  if(!name || name.length < 2 || name.length > 100){
+    toast('⚠ Introduz um nome válido (2–100 caracteres).','err'); return;
+  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    toast('⚠ Introduz um email válido.','err'); return;
+  }
+  if(!/^\d{9}$/.test(phone.replace(/\s/g,''))){
+    toast('⚠ Introduz um telemóvel válido (9 dígitos).','err'); return;
+  }
   var btn   = document.getElementById('btn-submit');
   btn.disabled = true; btn.textContent = 'A registar...';
   showLoad('A registar o teu pedido...');

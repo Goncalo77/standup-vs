@@ -450,17 +450,17 @@ function renderPendingTable(pend){
 
 function renderPendingRow(t, editing){
   var nameCell = editing
-    ? '<input id="edit-name-'+t.code+'" value="'+t.name.replace(/"/g,'&quot;')+'" style="width:100%;padding:.3rem .5rem;border:1.5px solid var(--ink);font-family:inherit;font-size:.82rem"><br><span style="font-size:.72rem;color:var(--muted)">'+t.email+'</span>'
-    : '<strong>'+t.name+'</strong><br><span style="font-size:.72rem;color:var(--muted)">'+t.email+'</span>';
+    ? '<input id="edit-name-'+t.code+'" value="'+esc(t.name)+'" style="width:100%;padding:.3rem .5rem;border:1.5px solid var(--ink);font-family:inherit;font-size:.82rem"><br><span style="font-size:.72rem;color:var(--muted)">'+esc(t.email)+'</span>'
+    : '<strong>'+esc(t.name)+'</strong><br><span style="font-size:.72rem;color:var(--muted)">'+esc(t.email)+'</span>';
   var phoneCell = editing
     ? '<input id="edit-phone-'+t.code+'" value="'+(t.phone||'')+'" maxlength="9" style="width:100px;padding:.3rem .5rem;border:1.5px solid var(--ink);font-family:\'Space Mono\',monospace;font-size:.72rem" oninput="this.value=this.value.replace(/\\D/g,\'\').slice(0,9)">'
-    : '<span style="font-family:\'Space Mono\',monospace;font-size:.75rem">'+(t.phone||'—')+'</span>';
+    : '<span style="font-family:\'Space Mono\',monospace;font-size:.75rem">'+esc(t.phone||'—')+'</span>';
   var actionBtns = editing
     ? '<button class="abtn green" onclick="savePendingEdit(\''+t.code+'\')">💾 Guardar</button>'+
       '<button class="abtn" onclick="cancelPendingEdit(\''+t.code+'\')">✕ Cancelar</button>'
     : '<button class="abtn green" onclick="confirmTicket(\''+t.code+'\')">✓ Confirmar</button>'+
       '<button class="abtn" style="background:var(--ink);color:white" onclick="startPendingEdit(\''+t.code+'\')">✎ Editar</button>'+
-      '<button class="abtn red" onclick="rejectTicket(\''+t.code+'\',\''+t.name.replace(/'/g,"\\'")+'\','+t.qty+','+t.total+')">✗ Rejeitar</button>';
+      '<button class="abtn red" onclick="rejectTicket(\''+t.code+'\')">✗ Rejeitar</button>';
   return '<tr class="pr" id="pr-'+t.code+'">'+
     '<td style="font-family:\'Space Mono\',monospace;font-size:.62rem;letter-spacing:1px">'+t.code+'</td>'+
     '<td>'+nameCell+'</td>'+
@@ -542,8 +542,8 @@ function applyFilters(){
       ? '<button class="abtn" style="font-size:.68rem;padding:.3rem .6rem;background:var(--orange);color:white" onclick="revertUsed(\''+t.code+'\')">↩ Retroceder</button>'
       : '';
     return '<tr class="'+(t.status==='pending'?'pr':'')+'">'+
-      '<td style="font-family:\'Space Mono\',monospace;font-size:.62rem;letter-spacing:1px">'+t.code+'</td>'+
-      '<td>'+t.name+'</td>'+
+      '<td style="font-family:\'Space Mono\',monospace;font-size:.62rem;letter-spacing:1px">'+esc(t.code)+'</td>'+
+      '<td>'+esc(t.name)+'</td>'+
       '<td style="font-size:.75rem">'+canal+'</td>'+
       '<td style="text-align:center">'+t.qty+'</td>'+
       '<td>'+t.total+' €</td>'+
@@ -574,12 +574,13 @@ async function confirmTicket(code){
 
 var _rejectCode = null;
 
-function rejectTicket(code, name, qty, total){
+function rejectTicket(code){
+  var t = _pendingMap[code] || {};
   _rejectCode = code;
   setEl('rj-code', code);
-  setEl('rj-name', name || '—');
-  setEl('rj-qty', (qty || 1)+' bilhete(s)');
-  setEl('rj-total', (total || 0)+' €');
+  setEl('rj-name', t.name || '—');
+  setEl('rj-qty', (t.qty || 1)+' bilhete(s)');
+  setEl('rj-total', (t.total || 0)+' €');
   document.getElementById('reject-modal').classList.add('open');
 }
 
@@ -699,10 +700,10 @@ async function loadAdminUsers(){
       var lastLogin = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') : 'Nunca';
       return '<div class="admin-user-row">'+
         '<div>'+
-          '<div class="admin-user-email">'+u.email+(isSuperAdmin ? ' <span class="super-badge">SUPER ADMIN</span>' : '')+'</div>'+
-          '<div class="admin-user-meta">Último login: '+lastLogin+'</div>'+
+          '<div class="admin-user-email">'+esc(u.email)+(isSuperAdmin ? ' <span class="super-badge">SUPER ADMIN</span>' : '')+'</div>'+
+          '<div class="admin-user-meta">Último login: '+esc(lastLogin)+'</div>'+
         '</div>'+
-        (!isSuperAdmin ? '<button class="abtn red" style="font-size:.7rem;padding:.3rem .7rem" onclick="removeAdmin(\''+u.id+'\',\''+u.email+'\')">Remover</button>' : '')+
+        (!isSuperAdmin ? '<button class="abtn red" style="font-size:.7rem;padding:.3rem .7rem" onclick="removeAdmin(\''+esc(u.id)+'\',\''+esc(u.email)+'\')">Remover</button>' : '')+
       '</div>';
     }).join('');
   } catch(e){
@@ -757,7 +758,7 @@ function verifyLookup(){
   var box = document.getElementById('v-result');
   if(!t){
     box.style.display = 'block';
-    box.innerHTML = '<div style="text-align:center;padding:1.2rem;background:var(--cream);border:1.5px solid var(--border);font-family:\'Space Mono\',monospace;font-size:.75rem;color:var(--muted)">Nenhum bilhete encontrado para "<strong>'+q+'</strong>"</div>';
+    box.innerHTML = '<div style="text-align:center;padding:1.2rem;background:var(--cream);border:1.5px solid var(--border);font-family:\'Space Mono\',monospace;font-size:.75rem;color:var(--muted)">Nenhum bilhete encontrado para "<strong>'+esc(q)+'</strong>"</div>';
     return;
   }
   var statusMap = { valid:'✓ Confirmado', used:'Usado', presencial:'Presencial', pending:'⏳ Pendente', cancelled:'✗ Cancelado' };
@@ -772,15 +773,15 @@ function verifyLookup(){
         '<span class="pill '+cls+'">'+label+'</span>'+
       '</div>'+
       '<div style="display:grid;gap:.4rem;font-size:.83rem">'+
-        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Código</span><strong style="font-family:\'Space Mono\',monospace;letter-spacing:2px">'+t.code+'</strong></div>'+
-        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Nome</span><strong>'+t.name+'</strong></div>'+
-        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Telemóvel</span><span>'+(t.phone||'—')+'</span></div>'+
-        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Email</span><span>'+t.email+'</span></div>'+
-        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Bilhetes</span><span>'+t.qty+'</span></div>'+
-        '<div style="display:flex;justify-content:space-between;padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Total</span><strong>'+t.total+' €</strong></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Código</span><strong style="font-family:\'Space Mono\',monospace;letter-spacing:2px">'+esc(t.code)+'</strong></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Nome</span><strong>'+esc(t.name)+'</strong></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Telemóvel</span><span>'+esc(t.phone||'—')+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Email</span><span>'+esc(t.email)+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Bilhetes</span><span>'+esc(String(t.qty))+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;padding:.35rem 0"><span style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase">Total</span><strong>'+esc(String(t.total))+' €</strong></div>'+
       '</div>'+
       '<div style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap">'+
-        '<a class="abtn" href="bilhete.html?codigo='+t.code+'" target="_blank" style="font-size:.75rem;text-decoration:none">🎟️ Ver Bilhete</a>'+
+        '<a class="abtn" href="bilhete.html?codigo='+encodeURIComponent(t.code)+'" target="_blank" style="font-size:.75rem;text-decoration:none">🎟️ Ver Bilhete</a>'+
         ((t.status==='valid'||t.status==='presencial') ? '<button class="abtn" style="font-size:.75rem" onclick="resendEmail(\''+t.code+'\')">📧 Reenviar Email</button>' : '')+
       '</div>'+
     '</div>';

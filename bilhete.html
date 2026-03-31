@@ -204,8 +204,6 @@ function reloadTicket(){
 }
 
 async function loadTicket(code){
-  // Rate limiting: max 20 lookups por minuto por browser
-  if(!RL.check('lookup', 20, 60000)) return;
   showLoad('A carregar bilhete...');
   try {
     var t = await getTicketByCode(code);

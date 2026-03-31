@@ -279,8 +279,8 @@ function doLookup(){
     var canValidate = t.status==='valid'||t.status==='presencial';
     return '<div class="lookup-item">'+
       '<div class="li-info">'+
-        '<div class="li-name">'+t.name+'</div>'+
-        '<div class="li-detail">'+t.email+' · '+t.phone+' · '+t.code+'</div>'+
+        '<div class="li-name">'+esc(t.name)+'</div>'+
+        '<div class="li-detail">'+esc(t.email)+' · '+esc(t.phone)+' · '+esc(t.code)+'</div>'+
       '</div>'+
       '<span class="li-status '+statusClass+'">'+statusLabel+'</span>'+
       (canValidate ? '<button class="abtn green" onclick="validateFromLookup(\''+t.code+'\')">Validar Entrada</button>' : '')+

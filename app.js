@@ -201,25 +201,16 @@ function toast(msg, type) {
 }
 
 /* ============================================================
-   RATE LIMITING (client-side)
+   HTML ESCAPING
    ============================================================ */
-var RL = {
-  check: function(key, max, windowMs) {
-    if(CFG.devMode) return true;
-    var now = Date.now();
-    var stored;
-    try { stored = JSON.parse(localStorage.getItem('rl_'+key) || '[]'); } catch(e) { stored = []; }
-    var recent = stored.filter(function(t){ return now - t < windowMs; });
-    if(recent.length >= max) {
-      var waitSec = Math.ceil((windowMs - (now - recent[0])) / 1000);
-      toast('⚠ Demasiadas tentativas. Aguarda '+waitSec+'s.','err');
-      return false;
-    }
-    recent.push(now);
-    try { localStorage.setItem('rl_'+key, JSON.stringify(recent)); } catch(e){}
-    return true;
-  }
-};
+function esc(s){
+  return String(s==null?'':s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 
 /* ============================================================
    SECURE CODE GENERATION
